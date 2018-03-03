@@ -12,6 +12,11 @@ GffStruct::GffStruct(Raw::GffField const& rawField, Raw::Gff const& rawGff)
     ConstructInternal(rawGff.ConstructStruct(rawField), rawGff);
 }
 
+GffStruct::FieldMap const& GffStruct::GetFields() const
+{
+    return m_Fields;
+}
+
 void GffStruct::ConstructInternal(Raw::GffStruct const& rawStruct, Raw::Gff const& rawGff)
 {
     std::vector<Raw::GffField> fields;
@@ -54,22 +59,22 @@ void GffStruct::ConstructInternal(std::vector<Raw::GffField> const& rawFields, R
 
         switch (rawField.m_Type)
         {
-        case Raw::GffField::BYTE:          m_Fields[label] = rawGff.ConstructBYTE(rawField); break;
-        case Raw::GffField::CHAR:          m_Fields[label] = rawGff.ConstructCHAR(rawField); break;
-        case Raw::GffField::WORD:          m_Fields[label] = rawGff.ConstructWORD(rawField); break;
-        case Raw::GffField::SHORT:         m_Fields[label] = rawGff.ConstructSHORT(rawField); break;
-        case Raw::GffField::DWORD:         m_Fields[label] = rawGff.ConstructDWORD(rawField); break;
-        case Raw::GffField::INT:           m_Fields[label] = rawGff.ConstructINT(rawField); break;
-        case Raw::GffField::DWORD64:       m_Fields[label] = rawGff.ConstructDWORD64(rawField); break;
-        case Raw::GffField::INT64:         m_Fields[label] = rawGff.ConstructINT64(rawField); break;
-        case Raw::GffField::FLOAT:         m_Fields[label] = rawGff.ConstructFLOAT(rawField); break;
-        case Raw::GffField::DOUBLE:        m_Fields[label] = rawGff.ConstructDOUBLE(rawField); break;
-        case Raw::GffField::CExoString:    m_Fields[label] = rawGff.ConstructCExoString(rawField); break;
-        case Raw::GffField::ResRef:        m_Fields[label] = rawGff.ConstructResRef(rawField); break;
-        case Raw::GffField::CExoLocString: m_Fields[label] = rawGff.ConstructCExoLocString(rawField); break;
-        case Raw::GffField::VOID:          m_Fields[label] = rawGff.ConstructVOID(rawField); break;
-        case Raw::GffField::Struct:        m_Fields[label] = GffStruct(rawField, rawGff); break;
-        case Raw::GffField::List:          m_Fields[label] = GffList(rawField, rawGff); break;
+        case Raw::GffField::BYTE:          m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructBYTE(rawField)); break;
+        case Raw::GffField::CHAR:          m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructCHAR(rawField)); break;
+        case Raw::GffField::WORD:          m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructWORD(rawField)); break;
+        case Raw::GffField::SHORT:         m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructSHORT(rawField)); break;
+        case Raw::GffField::DWORD:         m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructDWORD(rawField)); break;
+        case Raw::GffField::INT:           m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructINT(rawField)); break;
+        case Raw::GffField::DWORD64:       m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructDWORD64(rawField)); break;
+        case Raw::GffField::INT64:         m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructINT64(rawField)); break;
+        case Raw::GffField::FLOAT:         m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructFLOAT(rawField)); break;
+        case Raw::GffField::DOUBLE:        m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructDOUBLE(rawField)); break;
+        case Raw::GffField::CExoString:    m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructCExoString(rawField)); break;
+        case Raw::GffField::ResRef:        m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructResRef(rawField)); break;
+        case Raw::GffField::CExoLocString: m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructCExoLocString(rawField)); break;
+        case Raw::GffField::VOID:          m_Fields[label] = std::make_pair(rawField.m_Type, rawGff.ConstructVOID(rawField)); break;
+        case Raw::GffField::Struct:        m_Fields[label] = std::make_pair(rawField.m_Type, GffStruct(rawField, rawGff)); break;
+        case Raw::GffField::List:          m_Fields[label] = std::make_pair(rawField.m_Type, GffList(rawField, rawGff)); break;
         default: ASSERT_FAIL_MSG("Unrecognised GFF field type: %d", rawField.m_Type); break;
         }
     }

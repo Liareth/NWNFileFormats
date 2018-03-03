@@ -20,6 +20,12 @@ public:
     // This will construct a struct from one field in the gff - assuming the field is of type struct (e.g. its own entry).
     GffStruct(Raw::GffField const& rawField, Raw::Gff const& rawGff);
 
+    // The field map maps between std::string (field name) -> { Type (gff Type), std::any (type safe variant) }
+    using FieldMap = std::unordered_map<std::string, std::pair<Raw::GffField::Type, std::any>>;
+
+    // We expose direct access to the map here. This allows users to iterate over all fields if they need to do so.
+    FieldMap const& GetFields() const;
+
     // The mapping of raw types to return values from ReadField matches the defines in Friendly::Type_*.
     template <typename T>
     bool ReadField(std::string const& fieldName, T* out) const;
@@ -29,7 +35,7 @@ private:
     void ConstructInternal(std::vector<Raw::GffField> const& rawFields, Raw::Gff const& rawGff);
 
     // We map between field name -> variant here.
-    std::unordered_map<std::string, std::any> m_Fields;
+    FieldMap m_Fields;
 };
 
 template <typename T>
@@ -40,14 +46,17 @@ bool GffStruct::ReadField(std::string const& fieldName, T* out) const
     auto entry = m_Fields.find(fieldName);
     if (entry != std::end(m_Fields))
     {
+        Raw::GffField::Type type = entry->second.first;
+        std::any const& variant = entry->second.second;
+
         try
         {
-            *out = std::any_cast<T>(entry->second);
+            *out = std::any_cast<T>(variant);
             return true;
         }
         catch (std::bad_cast&)
         {
-            ASSERT_FAIL_MSG("Failed to extract field name %s due to a type mismatch.", fieldName.c_str());
+            ASSERT_FAIL_MSG("Failed to extract field name %s due to a type mismatch. The Gff type stored was %u.", fieldName.c_str(), type);
             return false;
         }
     }
