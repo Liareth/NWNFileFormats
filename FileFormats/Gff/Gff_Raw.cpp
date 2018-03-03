@@ -229,16 +229,8 @@ namespace {
 template <typename T>
 void ReadGenericOffsetable(std::byte const* bytesWithInitialOffset, std::size_t count, std::vector<T>& out)
 {
-    for (std::uint32_t i = 0; i < count; ++i)
-    {
-        T entry;
-
-        std::size_t len = sizeof(T);
-        std::memcpy(&entry, bytesWithInitialOffset, len);
-        out.emplace_back(entry);
-
-        bytesWithInitialOffset += len;
-    }
+    out.resize(count);
+    std::memcpy(out.data(), bytesWithInitialOffset, count * sizeof(T));
 }
 
 }
