@@ -144,7 +144,42 @@ GffField::Type_CResRef Gff::ConstructResRef(GffField const& field) const
 GffField::Type_CExoLocString Gff::ConstructCExoLocString(GffField const& field) const
 {
     ASSERT(field.m_Type == GffField::Type::CExoLocString);
-    return {}; // TODO
+
+    std::uint32_t offsetIntoFieldDataArray = field.m_DataOrDataOffset;
+    ASSERT(offsetIntoFieldDataArray < m_FieldData.size());
+
+    GffField::Type_CExoLocString locString;
+
+    std::byte const* ptr = m_FieldData.data() + offsetIntoFieldDataArray;
+
+    std::memcpy(&locString.m_TotalSize, ptr, sizeof(locString.m_TotalSize));
+    ptr += sizeof(locString.m_TotalSize);
+
+    std::memcpy(&locString.m_StringRef, ptr, sizeof(locString.m_StringRef));
+    ptr += sizeof(locString.m_StringRef);
+
+    std::uint32_t stringCount;
+    std::memcpy(&stringCount, ptr, sizeof(stringCount));
+    ptr += sizeof(stringCount);
+
+    for (std::size_t i = 0; i < stringCount; ++i)
+    {
+        GffField::Type_CExoLocString::SubString substring;
+
+        std::memcpy(&substring.m_StringID, ptr, sizeof(substring.m_StringID));
+        ptr += sizeof(substring.m_StringID);
+
+        std::uint32_t substringLength;
+        std::memcpy(&substringLength, ptr, sizeof(substringLength));
+        ptr += sizeof(substringLength);
+
+        substring.m_String = std::string(reinterpret_cast<char const*>(ptr), substringLength);
+        ptr += substringLength;
+
+        locString.m_SubStrings.emplace_back(substring);
+    }
+
+    return locString;
 }
 
 GffField::Type_VOID Gff::ConstructVOID(GffField const& field) const

@@ -188,7 +188,9 @@ struct GffField
             // A LocString SubString has almost the same format as a CExoString, but includes an additional String
             // ID at the beginning
             std::int32_t m_StringID;
-            Type_CExoString m_String;
+            // std::uint32_t m_Size;
+            // char m_String[m_Size];
+            std::string m_String;
 
             // The StringID stored in a GFF file does not match up exactly to the LanguageIDs shown in Table 2.2b.
             // Instead, it is 2 times the Language ID, plus the Gender (0 for neutral or masculine, 1 for feminine).
