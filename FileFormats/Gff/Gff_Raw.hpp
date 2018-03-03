@@ -98,27 +98,27 @@ struct GffField
 
         // NOTE: We define u8/u16/etc which aren't technically part of the standard but make it much easier to understand
         // what each type actually is.
-        u8, BYTE = u8,
+        BYTE, u8 = BYTE,
         CHAR,
-        u16, WORD = u16,
-        i16, SHORT = i16,
-        u32, DWORD = u32,
-        i32, INT = i32,
+        WORD, u16 = WORD,
+        SHORT, i16 = SHORT,
+        DWORD, u32 = DWORD,
+        INT, i32 = INT,
 
         // A DWORD64 is a 64-bit (8-byte) unsigned integer. As with all integer values in GFF, the least
         // significant byte comes first, and the most significant byte is last.
-        u64, DWORD64 = u64, // See *
+        DWORD64, u64 = DWORD64, // See *
 
         // An INT64 is a 64-bit (8-byte) signed integer. As with all integer values in GFF, the least significant
         // byte comes first, and the most significant byte is last.
-        i64, INT64 = i64, // See *
+        INT64, i64 = INT64, // See *
 
-        f32, FLOAT = f32,
+        FLOAT, f32 = FLOAT,
 
         // A DOUBLE is a double-precision floating point value, and takes up 8 bytes. It is stored in little-endian
         // byte order, with the least significant byte first.
         // (Both the FLOAT and DOUBLE data types conform to IEEE Standard 754-1985).
-        f64, DOUBLE = f64, // See *
+        DOUBLE, f64 = DOUBLE, // See *
 
         // Refer to Type_CExoString below.
         CExoString, // See *
