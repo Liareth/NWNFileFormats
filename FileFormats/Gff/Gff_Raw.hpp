@@ -312,7 +312,6 @@ using GffListIndex = std::byte;
 
 struct Gff
 {
-public:
     GffHeader m_Header;
     std::vector<GffStruct> m_Structs;
     std::vector<GffField> m_Fields;
