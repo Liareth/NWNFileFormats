@@ -95,7 +95,7 @@ struct ErfResource
     // specifies where the data for the file begins inside the ERF, and how many bytes of data there are.
 
     std::uint32_t m_OffsetToResource; // offset to file data from beginning of ERF
-    std::uint32_t m_ResourceSie; // number of bytes
+    std::uint32_t m_ResourceSize; // number of bytes
 };
 
 using ErfResourceData = std::byte;
