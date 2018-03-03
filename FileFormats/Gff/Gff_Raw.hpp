@@ -90,7 +90,7 @@ struct GffField
     // The Field Array contains all the Fields in the GFF file except for the Top-Level Struct.
     // Each Field contains the values listed in the table below. All of the values are DWORDs.
 
-    enum Type : std::uint32_t
+    enum class Type : std::uint32_t
     {
         // The Field Type specifies what data type the Field stores (recall the data types from Section 2.2). The
         // following table lists the values for each Field type. A datatype is considered complex if it would not fit

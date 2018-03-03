@@ -150,79 +150,79 @@ void GffExamplePrintGff_r(GffStruct const& element, int depth)
         // kvp.second.first = Raw::GffField::Type
         // kvp.second.second = std::any (we don't care about this one as ReadField will extract for us.
 
-        if (kvp.second.first == Raw::GffField::BYTE)
+        if (kvp.second.first == Raw::GffField::Type::BYTE)
         {
             Type_BYTE value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [BYTE] %u", depth, ' ', kvp.first.c_str(), value);
         }
-        else if (kvp.second.first == Raw::GffField::CHAR)
+        else if (kvp.second.first == Raw::GffField::Type::CHAR)
         {
             Type_CHAR value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [CHAR] %c", depth, ' ', kvp.first.c_str(), value);
         }
-        else if (kvp.second.first == Raw::GffField::WORD)
+        else if (kvp.second.first == Raw::GffField::Type::WORD)
         {
             Type_WORD value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [WORD] %u", depth, ' ', kvp.first.c_str(), value);
         }
-        else if (kvp.second.first == Raw::GffField::SHORT)
+        else if (kvp.second.first == Raw::GffField::Type::SHORT)
         {
             Type_SHORT value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [SHORT] %d", depth, ' ', kvp.first.c_str(), value);
         }
-        else if (kvp.second.first == Raw::GffField::DWORD)
+        else if (kvp.second.first == Raw::GffField::Type::DWORD)
         {
             Type_DWORD value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [DWORD] %u", depth, ' ', kvp.first.c_str(), value);
         }
-        else if (kvp.second.first == Raw::GffField::INT)
+        else if (kvp.second.first == Raw::GffField::Type::INT)
         {
             Type_INT value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [INT] %d", depth, ' ', kvp.first.c_str(), value);
         }
-        else if (kvp.second.first == Raw::GffField::DWORD64)
+        else if (kvp.second.first == Raw::GffField::Type::DWORD64)
         {
             Type_DWORD64 value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [DWORD64] %llu", depth, ' ', kvp.first.c_str(), value);
         }
-        else if (kvp.second.first == Raw::GffField::INT64)
+        else if (kvp.second.first == Raw::GffField::Type::INT64)
         {
             Type_INT64 value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [INT64] %lld", depth, ' ', kvp.first.c_str(), value);
         }
-        else if (kvp.second.first == Raw::GffField::FLOAT)
+        else if (kvp.second.first == Raw::GffField::Type::FLOAT)
         {
             Type_FLOAT value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [FLOAT] %f", depth, ' ', kvp.first.c_str(), value);
         }
-        else if (kvp.second.first == Raw::GffField::DOUBLE)
+        else if (kvp.second.first == Raw::GffField::Type::DOUBLE)
         {
             Type_DOUBLE value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [DOUBLE] %f", depth, ' ', kvp.first.c_str(), value);
         }
-        else if (kvp.second.first == Raw::GffField::CExoString)
+        else if (kvp.second.first == Raw::GffField::Type::CExoString)
         {
             Type_CExoString value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [CExoString] %s", depth, ' ', kvp.first.c_str(), value.m_String.c_str());
         }
-        else if (kvp.second.first == Raw::GffField::ResRef)
+        else if (kvp.second.first == Raw::GffField::Type::ResRef)
         {
             Type_CResRef value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [ResRef] %.*s", depth, ' ', kvp.first.c_str(), value.m_Size, value.m_String);
         }
-        else if (kvp.second.first == Raw::GffField::CExoLocString)
+        else if (kvp.second.first == Raw::GffField::Type::CExoLocString)
         {
             Type_CExoLocString value;
             element.ReadField(kvp, &value);
@@ -236,13 +236,13 @@ void GffExamplePrintGff_r(GffStruct const& element, int depth)
                 std::printf("\n%*cString: %s", depth + 1, ' ', substring.m_String.c_str());
             }
         }
-        else if (kvp.second.first == Raw::GffField::VOID)
+        else if (kvp.second.first == Raw::GffField::Type::VOID)
         {
             Type_VOID value;
             element.ReadField(kvp, &value);
             std::printf("\n%*c%s: [VOID] Binary size: %zu", depth, ' ', kvp.first.c_str(), value.m_Data.size());
         }
-        else if (kvp.second.first == Raw::GffField::Struct)
+        else if (kvp.second.first == Raw::GffField::Type::Struct)
         {
             Type_Struct value;
             element.ReadField(kvp, &value);
@@ -250,7 +250,7 @@ void GffExamplePrintGff_r(GffStruct const& element, int depth)
 
             GffExamplePrintGff_r(value, depth + 1);
         }
-        else if (kvp.second.first == Raw::GffField::List)
+        else if (kvp.second.first == Raw::GffField::Type::List)
         {
             Type_List value;
             element.ReadField(kvp, &value);
