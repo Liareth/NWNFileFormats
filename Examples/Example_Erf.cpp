@@ -38,8 +38,10 @@ int ErfExample(char* path)
         return 1;
     }
 
-    FileFormats::Erf::Raw::Erf rawErf;
-    bool loaded = FileFormats::Erf::Raw::Erf::ReadFromBytes(erfData.data(), erfData.size(), &rawErf);
+    using namespace FileFormats::Erf;
+
+    Raw::Erf rawErf;
+    bool loaded = Raw::Erf::ReadFromBytes(erfData.data(), erfData.size(), &rawErf);
 
     std::printf("ERF FileType: %.4s\n", rawErf.m_Header.m_FileType);
     std::printf("ERF Version: %.4s\n", rawErf.m_Header.m_Version);
@@ -49,6 +51,42 @@ int ErfExample(char* path)
     {
         std::printf("Failed to load the ERF file. Check the FileType and Version and ensure the file is well formed.\n");
         return 1;
+    }
+
+    Friendly::Erf erf(rawErf);
+
+    std::vector<Raw::ErfLocalisedString> const& descriptions = erf.GetDescriptions();
+
+    if (descriptions.empty())
+    {
+        std::printf("\nNo description specified\n");
+    }
+    else
+    {
+        // Print the first description - this may not be English but probably will be.
+        std::printf("\nDescription: %s\n", descriptions[0].m_String.c_str());
+    }
+
+    Friendly::Erf::ErfResourceMap const& resources = erf.GetResources();
+
+    std::printf("\nResources:\n");
+
+    for (auto const& resrefBucket : resources)
+    {
+        using namespace FileFormats::Resource;
+
+        std::string const& resref = resrefBucket.first;
+
+        std::unordered_map<ResourceType, Friendly::ErfResource> const& bucket = resrefBucket.second;
+        std::printf("\n%s", resref.c_str());
+
+        for (auto const& resource : bucket)
+        {
+            std::uint32_t resId = resource.second.m_ResourceId;
+            const char* resType = StringFromResourceType(resource.first);
+            std::size_t resBytes = resource.second.m_Data.size();
+            std::printf("\n %s.%s: %zu bytes [%u] ", resref.c_str(), resType, resBytes, resId);
+        }
     }
 
     return 0;
