@@ -235,7 +235,7 @@ void GffExamplePrintGff_r(GffStruct const& element, int depth)
         {
             Type_CResRef value;
             element.ReadField(kvp, &value);
-            std::sprintf(lineBuffer + start, "[ResRef] %.16s", value.m_String);
+            std::sprintf(lineBuffer + start, "[ResRef] %.*s", value.m_Size, value.m_String);
             std::printf(lineBuffer);
         }
         else if (kvp.second.first == Raw::GffField::CExoLocString)
