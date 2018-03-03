@@ -12,6 +12,9 @@
 // Step 3: If user friendly access to fields in desired, construct a Gff from FileFormats::Friendly::Gff(rawGff).
 // - You can access the top level struct with GetTopLevelStruct().
 // - You can access fields with GetTopLevelStruct().ReadField<Type_CExoString>("FIELD_NAME").
+//
+// For further information refer to https://wiki.neverwintervault.org/pages/viewpage.action?pageId=327727
+// Specifically, https://wiki.neverwintervault.org/download/attachments/327727/Bioware_Aurora_GFF_Format.pdf?api=v2
 
 #include "FileFormats/Gff/Gff_Raw.hpp"
 #include "FileFormats/Gff/Gff_Friendly.hpp"
