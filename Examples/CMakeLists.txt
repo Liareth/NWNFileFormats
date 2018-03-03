@@ -1,0 +1,2 @@
+add_executable(Example_Gff Example_Gff.cpp)
+target_link_libraries(Example_Gff FileFormats)
