@@ -138,7 +138,7 @@ GffField::Type_CResRef Gff::ConstructResRef(GffField const& field) const
     std::memcpy(&resref.m_Size, m_FieldData.data() + offsetIntoFieldDataArray, sizeof(resref.m_Size));
     std::memcpy(&resref.m_String, m_FieldData.data() + offsetIntoFieldDataArray + sizeof(resref.m_Size), sizeof(resref.m_String));
 
-    return {};
+    return resref;
 }
 
 GffField::Type_CExoLocString Gff::ConstructCExoLocString(GffField const& field) const
