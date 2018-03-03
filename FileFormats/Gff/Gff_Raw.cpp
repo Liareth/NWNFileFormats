@@ -150,7 +150,19 @@ GffField::Type_CExoLocString Gff::ConstructCExoLocString(GffField const& field) 
 GffField::Type_VOID Gff::ConstructVOID(GffField const& field) const
 {
     ASSERT(field.m_Type == GffField::Type::VOID);
-    return {}; // TODO
+
+    std::uint32_t offsetIntoFieldDataArray = field.m_DataOrDataOffset;
+    ASSERT(offsetIntoFieldDataArray < m_FieldData.size());
+
+    GffField::Type_VOID binary;
+
+    std::uint32_t size;
+    std::memcpy(&size, m_FieldData.data() + offsetIntoFieldDataArray, sizeof(size));
+
+    binary.m_Data.resize(size);
+    std::memcpy(binary.m_Data.data(), m_FieldData.data() + offsetIntoFieldDataArray + sizeof(size), size);
+
+    return binary;
 }
 
 GffField::Type_Struct Gff::ConstructStruct(GffField const& field) const
