@@ -27,8 +27,17 @@ public:
     FieldMap const& GetFields() const;
 
     // The mapping of raw types to return values from ReadField matches the defines in Friendly::Type_*.
+    // This looks up the field in m_Fields and extracts the actual type.
     template <typename T>
     bool ReadField(std::string const& fieldName, T* out) const;
+
+    // Similar to above, except using the iterator.
+    template <typename T>
+    static bool ReadField(typename FieldMap::const_iterator iter, T* out);
+
+    // Similiar to above, except using the kvp pair.
+    template <typename T>
+    static bool ReadField(typename FieldMap::value_type const& kvp, T* out);
 
 private:
     void ConstructInternal(Raw::GffStruct const& rawStruct, Raw::Gff const& rawGff);
@@ -46,22 +55,38 @@ bool GffStruct::ReadField(std::string const& fieldName, T* out) const
     auto entry = m_Fields.find(fieldName);
     if (entry != std::end(m_Fields))
     {
-        Raw::GffField::Type type = entry->second.first;
-        std::any const& variant = entry->second.second;
-
-        try
-        {
-            *out = std::any_cast<T>(variant);
-            return true;
-        }
-        catch (std::bad_cast&)
-        {
-            ASSERT_FAIL_MSG("Failed to extract field name %s due to a type mismatch. The Gff type stored was %u.", fieldName.c_str(), type);
-            return false;
-        }
+        return ReadField(entry, out);
     }
 
     return false;
+}
+
+template <typename T>
+bool GffStruct::ReadField(typename GffStruct::FieldMap::const_iterator iter, T* out)
+{
+    ASSERT(out);
+    return ReadField(*iter, out);
+}
+
+template <typename T>
+bool GffStruct::ReadField(typename GffStruct::FieldMap::value_type const& kvp, T* out)
+{
+    ASSERT(out);
+
+    std::string const& fieldName = kvp.first;
+    Raw::GffField::Type type = kvp.second.first;
+    std::any const& variant = kvp.second.second;
+
+    try
+    {
+        *out = std::any_cast<T>(variant);
+        return true;
+    }
+    catch (std::bad_cast&)
+    {
+        ASSERT_FAIL_MSG("Failed to extract field name %s due to a type mismatch. The Gff type stored was %u.", fieldName.c_str(), type);
+        return false;
+    }
 }
 
 class GffList
@@ -92,7 +117,7 @@ using Type_DOUBLE = Raw::GffField::Type_DOUBLE;
 using Type_CExoString = Raw::GffField::Type_CExoString;
 using Type_CResRef = Raw::GffField::Type_CResRef;
 using Type_CExoLocString = Raw::GffField::Type_CExoLocString;
-using Type_Void = Raw::GffField::Type_Void;
+using Type_VOID = Raw::GffField::Type_VOID;
 using Type_Struct = GffStruct;
 using Type_List = GffList;
 

@@ -147,7 +147,7 @@ GffField::Type_CExoLocString Gff::ConstructCExoLocString(GffField const& field) 
     return {}; // TODO
 }
 
-GffField::Type_Void Gff::ConstructVOID(GffField const& field) const
+GffField::Type_VOID Gff::ConstructVOID(GffField const& field) const
 {
     ASSERT(field.m_Type == GffField::Type::VOID);
     return {}; // TODO

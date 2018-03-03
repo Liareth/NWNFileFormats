@@ -213,7 +213,7 @@ struct GffField
         std::vector<SubString> m_SubStrings;
     };
 
-    struct Type_Void
+    struct Type_VOID
     {
         // Void data is an arbitrary sequence of bytes to be interpreted by the application in a programmer-defined
         // fashion. The format is shown below:
@@ -335,7 +335,7 @@ public:
     GffField::Type_CExoString ConstructCExoString(GffField const& field) const;
     GffField::Type_CResRef ConstructResRef(GffField const& field) const;
     GffField::Type_CExoLocString ConstructCExoLocString(GffField const& field) const;
-    GffField::Type_Void ConstructVOID(GffField const& field) const;
+    GffField::Type_VOID ConstructVOID(GffField const& field) const;
     GffField::Type_Struct ConstructStruct(GffField const& field) const;
     GffField::Type_List ConstructList(GffField const& field) const;
 
