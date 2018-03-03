@@ -244,6 +244,14 @@ void GffExamplePrintGff_r(GffStruct const& element, int depth)
             element.ReadField(kvp, &value);
             std::sprintf(lineBuffer + start, "[CExoLocString] StrRef: %u, SubString count: %zu", value.m_StringRef, value.m_SubStrings.size());
             std::printf(lineBuffer);
+
+            for (std::size_t i = 0; i < value.m_SubStrings.size(); ++i)
+            {
+                Type_CExoLocString::SubString const& substring = value.m_SubStrings[i];
+                std::printf("\n%*c%s #%zu:", depth, ' ', kvp.first.c_str(), i);
+                std::printf("\n%*cStringID: %u", depth + 1, ' ', substring.m_StringID);
+                std::printf("\n%*cString: %s", depth + 1, ' ', substring.m_String.c_str());
+            }
         }
         else if (kvp.second.first == Raw::GffField::VOID)
         {
