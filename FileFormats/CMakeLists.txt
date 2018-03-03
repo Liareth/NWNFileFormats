@@ -2,6 +2,7 @@ add_library(FileFormats STATIC
 
     Erf.hpp
     Erf/Erf_Raw.cpp Erf/Erf_Raw.hpp
+    Erf/Erf_Friendly.cpp Erf/Erf_Friendly.hpp
 
     Gff.hpp
     Gff/Gff_Friendly.cpp Gff/Gff_Friendly.hpp
