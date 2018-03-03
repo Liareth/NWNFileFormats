@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 // This file describes the supported types of resources.
 // The data in this file (and the matching .cpp) is auto generated based on the contents
 // of tables 1.3.1 and 1.3.2 of the Key/BIF spec document. Refer to it for further information.
@@ -7,7 +9,7 @@
 
 namespace FileFormats::Resource {
 
-enum class ResourceType
+enum class ResourceType : std::uint16_t
 {
     // Invalid resource type
     INVALID = 0xFFFF, // N/A
