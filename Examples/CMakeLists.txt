@@ -9,3 +9,6 @@ target_link_libraries(Example_Gff FileFormats)
 
 add_executable(Example_Key Example_Key.cpp)
 target_link_libraries(Example_Key FileFormats)
+
+add_executable(Example_KeyBifExtractor Example_KeyBifExtractor.cpp)
+target_link_libraries(Example_KeyBifExtractor FileFormats)
