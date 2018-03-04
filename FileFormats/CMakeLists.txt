@@ -5,8 +5,11 @@ add_library(FileFormats STATIC
     Erf/Erf_Friendly.cpp Erf/Erf_Friendly.hpp
 
     Gff.hpp
-    Gff/Gff_Friendly.cpp Gff/Gff_Friendly.hpp
     Gff/Gff_Raw.cpp Gff/Gff_Raw.hpp
+    Gff/Gff_Friendly.cpp Gff/Gff_Friendly.hpp
+
+    Key.hpp
+    Key/Key_Raw.cpp Key/Key_Raw.hpp
 
     Resource.cpp Resource.hpp
 )
