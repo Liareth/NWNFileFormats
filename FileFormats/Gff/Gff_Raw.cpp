@@ -176,7 +176,7 @@ GffField::Type_CExoLocString Gff::ConstructCExoLocString(GffField const& field) 
         substring.m_String = std::string(reinterpret_cast<char const*>(ptr), substringLength);
         ptr += substringLength;
 
-        locString.m_SubStrings.emplace_back(substring);
+        locString.m_SubStrings.emplace_back(std::move(substring));
     }
 
     return locString;
