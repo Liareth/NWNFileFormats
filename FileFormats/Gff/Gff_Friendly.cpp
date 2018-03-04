@@ -86,11 +86,10 @@ GffList::GffList(Raw::GffField const& rawField, Raw::Gff const& rawGff)
 
     Raw::GffField::Type_List list = rawGff.ConstructList(rawField);
 
-    for (std::size_t i = 0; i < list.m_Elements.size(); ++i)
+    for (std::uint32_t offsetIntoStructArray : list.m_Elements)
     {
-        std::uint32_t offsetIntoStructArray = list.m_Elements[i];
         ASSERT(offsetIntoStructArray < rawGff.m_Structs.size());
-        m_Structs.emplace_back(GffStruct(rawGff.m_Structs[offsetIntoStructArray], rawGff));
+        m_Structs.emplace_back(rawGff.m_Structs[offsetIntoStructArray], rawGff);
     }
 }
 
