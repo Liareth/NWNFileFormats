@@ -3,5 +3,5 @@
 mkdir Build-Scratch
 pushd Build-Scratch
 cmake ../
-make -j 8
+make
 popd
