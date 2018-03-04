@@ -50,11 +50,8 @@ void GffStruct::ConstructInternal(std::vector<Raw::GffField> const& rawFields, R
 {
     for (Raw::GffField const& rawField : rawFields)
     {
-        char labelBuff[17];
-        std::memcpy(labelBuff, rawGff.m_Labels[rawField.m_LabelIndex].m_Label, 16);
-        labelBuff[16] = '\0';
-
-        std::string const& label = std::string(labelBuff);
+        char const* rawLabel = rawGff.m_Labels[rawField.m_LabelIndex].m_Label;
+        std::string label = std::string(rawLabel, rawLabel + strnlen_s(rawLabel, 16));
         ASSERT(m_Fields.find(label) == std::end(m_Fields));
 
         switch (rawField.m_Type)
