@@ -33,13 +33,12 @@ Key::Key(Raw::Key const& rawKey)
         // We just do the conversion to lower here to simplify things.
         std::transform(std::begin(resref), std::end(resref), std::begin(resref), ::tolower);
 
-        std::unordered_map<Resource::ResourceType, std::uint32_t>& bucket = m_ReferencedResources[resref];
-
-        // Make sure we don't already have a resource sharing this resref of the same type.
-        // This shouldn't be possible in a well-formed ERF.
-        ASSERT(bucket.find(rawEntry.m_ResourceType) == std::end(bucket));
-
-        bucket.insert(std::make_pair(rawEntry.m_ResourceType, rawEntry.m_ResID));
+        KeyBifReferencedResource entry;
+        entry.m_Resref = std::move(resref);
+        entry.m_ResType = rawEntry.m_ResourceType;
+        entry.m_ResId = rawEntry.m_ResID;
+        entry.m_ReferencedBifIndex = rawEntry.m_ResID >> 20;
+        m_ReferencedResources.emplace_back(std::move(entry));
     }
 }
 
@@ -48,7 +47,7 @@ std::vector<KeyBifReference> const& Key::GetReferencedBifs() const
     return m_ReferencedBifs;
 }
 
-Key::KeyResourceMap const& Key::GetReferencedResources() const
+std::vector<KeyBifReferencedResource> const& Key::GetReferencedResources() const
 {
     return m_ReferencedResources;
 }

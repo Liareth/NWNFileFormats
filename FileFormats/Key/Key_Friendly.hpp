@@ -20,6 +20,21 @@ struct KeyBifReference
     std::uint32_t m_FileSize;
 };
 
+struct KeyBifReferencedResource
+{
+    // The file name of the resource.
+    std::string m_Resref;
+
+    // The type of the resource.
+    Resource::ResourceType m_ResType;
+
+    // The unmodified ResID of the resource.
+    std::uint32_t m_ResId;
+
+    // The index into m_ReferencedBifs that this resource is inside.
+    std::size_t m_ReferencedBifIndex;
+};
+
 // This is a user friendly wrapper around the Key data.
 class Key
 {
@@ -27,15 +42,11 @@ public:
     Key(Raw::Key const& rawKey);
 
     std::vector<KeyBifReference> const& GetReferencedBifs() const;
-
-    using KeyResourceMap = std::unordered_map<std::string, std::unordered_map<Resource::ResourceType, std::uint32_t>>;
-    KeyResourceMap const& GetReferencedResources() const;
+    std::vector<KeyBifReferencedResource> const& GetReferencedResources() const;
 
 private:
     std::vector<KeyBifReference> m_ReferencedBifs;
-
-    // This maps between resref -> { type -> resource ID }
-    KeyResourceMap m_ReferencedResources;
+    std::vector<KeyBifReferencedResource> m_ReferencedResources;
 };
 
 }

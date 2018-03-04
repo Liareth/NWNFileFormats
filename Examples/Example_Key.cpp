@@ -63,25 +63,14 @@ int KeyExample(char* path)
         std::printf("\nDrives: %u, Path: %s, Size: %u", ref.m_Drives, ref.m_Path.c_str(), ref.m_FileSize);
     }
 
-    Friendly::Key::KeyResourceMap const& resources = key.GetReferencedResources();
-
     std::printf("\n\nReferenced resources:\n");
 
-    for (auto const& resrefBucket : resources)
+    for (Friendly::KeyBifReferencedResource const& res : key.GetReferencedResources())
     {
-        using namespace FileFormats::Resource;
-
-        std::string const& resref = resrefBucket.first;
-
-        std::unordered_map<ResourceType, std::uint32_t> const& bucket = resrefBucket.second;
-        std::printf("\n%s", resref.c_str());
-
-        for (auto const& resource : bucket)
-        {
-            std::uint32_t resId = resource.second;
-            const char* resType = StringFromResourceType(resource.first);
-            std::printf("\n %s.%s [%u] ", resref.c_str(), resType, resId);
-        }
+        ASSERT(res.m_ReferencedBifIndex < key.GetReferencedBifs().size());
+        const char* resType = FileFormats::Resource::StringFromResourceType(res.m_ResType);
+        std::string const& bifPath = key.GetReferencedBifs()[res.m_ReferencedBifIndex].m_Path;
+        std::printf("\n %s.%s %s [%u] ", res.m_Resref.c_str(), resType, bifPath.c_str(), res.m_ResId);
     }
 
     return 0;
