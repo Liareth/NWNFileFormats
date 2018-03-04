@@ -23,7 +23,7 @@ struct KeyBifReference
 struct KeyBifReferencedResource
 {
     // The file name of the resource.
-    std::string m_Resref;
+    std::string m_ResRef;
 
     // The type of the resource.
     Resource::ResourceType m_ResType;

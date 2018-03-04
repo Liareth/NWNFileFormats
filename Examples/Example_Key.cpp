@@ -70,7 +70,7 @@ int KeyExample(char* path)
         ASSERT(res.m_ReferencedBifIndex < key.GetReferencedBifs().size());
         const char* resType = FileFormats::Resource::StringFromResourceType(res.m_ResType);
         std::string const& bifPath = key.GetReferencedBifs()[res.m_ReferencedBifIndex].m_Path;
-        std::printf("\n %s.%s %s [%u] ", res.m_Resref.c_str(), resType, bifPath.c_str(), res.m_ResId);
+        std::printf("\n %s.%s %s [%u] ", res.m_ResRef.c_str(), resType, bifPath.c_str(), res.m_ResId);
     }
 
     return 0;

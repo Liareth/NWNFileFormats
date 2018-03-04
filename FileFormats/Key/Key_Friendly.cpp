@@ -34,7 +34,7 @@ Key::Key(Raw::Key const& rawKey)
         std::transform(std::begin(resref), std::end(resref), std::begin(resref), ::tolower);
 
         KeyBifReferencedResource entry;
-        entry.m_Resref = std::move(resref);
+        entry.m_ResRef = std::move(resref);
         entry.m_ResType = rawEntry.m_ResourceType;
         entry.m_ResId = rawEntry.m_ResID;
         entry.m_ReferencedBifIndex = rawEntry.m_ResID >> 20;
