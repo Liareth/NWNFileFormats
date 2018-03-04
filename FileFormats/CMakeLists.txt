@@ -10,6 +10,7 @@ add_library(FileFormats STATIC
 
     Key.hpp
     Key/Key_Raw.cpp Key/Key_Raw.hpp
+    Key/Key_Friendly.cpp Key/Key_Friendly.hpp
 
     Resource.cpp Resource.hpp
 )
