@@ -23,10 +23,10 @@ Erf::Erf(Raw::Erf const& rawErf)
         Raw::ErfKey const& rawKey = rawErf.m_Keys[i];
         Raw::ErfResource const& rawRes = rawErf.m_Resources[i];
 
-        // Construct the resref and convert it to lower-case.
+        std::string resref = std::string(rawKey.m_ResRef, rawKey.m_ResRef + strnlen_s(rawKey.m_ResRef, 16));
+
         // NWN is case insensitive and cases are mixed like crazy in the official modules.
         // We just do the conversion to lower here to simplify things.
-        std::string resref = std::string(rawKey.m_ResRef, 16);
         std::transform(std::begin(resref), std::end(resref), std::begin(resref), ::tolower);
 
         std::unordered_map<Resource::ResourceType, ErfResource>& bucket = m_Resources[resref];
