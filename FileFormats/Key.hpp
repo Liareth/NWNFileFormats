@@ -10,7 +10,7 @@
 // Step 2: Construct a Key as such: FileFormats::Key::Raw::Key::ReadFromBytes(bytes);
 // Step 3: If user friendly access is desired, construct a Key from FileFormats::Key::Friendly::Key(rawKey).
 // - Referenced BIFs can be accessed by .GetReferencedBifs().
-// - Referenced resources can be accessed by .GetReferencedResources(). They are bucketed as such - resources[resref][type] -> id.
+// - Referenced resources can be accessed by .GetReferencedResources().
 // - Refer to Example_Key.cpp if the usage is unclear.
 //
 // For further information refer to https://wiki.neverwintervault.org/pages/viewpage.action?pageId=327727

@@ -10,7 +10,7 @@
 // Step 2: Construct a Erf as such: FileFormats::Erf::Raw::Erf::ReadFromBytes(bytes, totalBytes);
 // Step 3: If user friendly access is desired, construct a Erf from FileFormats::Erf::Friendly::Erf(rawErf).
 // - Localised descriptions can be accessed by .GetDescriptions().
-// - Resources can be accessed by .GetResources(). They are bucketed as such - resources[resref][type].
+// - Resources can be accessed by .GetResources().
 // - Refer to Example_Erf.cpp if the usage is unclear.
 //
 // For further information refer to https://wiki.neverwintervault.org/pages/viewpage.action?pageId=327727
