@@ -1,5 +1,3 @@
-#pragma once
-
 #include "FileFormats/Bif/Bif_Friendly.hpp"
 #include "Utility/Assert.hpp"
 

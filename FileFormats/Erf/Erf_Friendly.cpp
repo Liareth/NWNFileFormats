@@ -1,5 +1,3 @@
-#pragma once
-
 #include "FileFormats/Erf/Erf_Friendly.hpp"
 #include "Utility/Assert.hpp"
 
