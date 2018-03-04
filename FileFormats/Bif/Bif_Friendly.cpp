@@ -10,7 +10,7 @@ Bif::Bif(Raw::Bif const& rawBif)
     ASSERT(!rawBif.m_Header.m_FixedResourceCount);
 
     // Calculate the offset into the data block manually ...
-    std::uint32_t offsetToDataBlock = rawBif.m_Header.m_VariableTableOffset;
+    std::size_t offsetToDataBlock = rawBif.m_Header.m_VariableTableOffset;
     offsetToDataBlock += rawBif.m_VariableResourceTable.size() * sizeof(Raw::BifVariableResource);
     offsetToDataBlock += rawBif.m_FixedResourceTable.size() * sizeof(Raw::BifFixedResource);
 
@@ -21,7 +21,7 @@ Bif::Bif(Raw::Bif const& rawBif)
         BifResource res;
         res.m_ResourceType = rawRes.m_ResourceType;
 
-        std::uint32_t offsetToData = rawRes.m_Offset - offsetToDataBlock;
+        std::size_t offsetToData = rawRes.m_Offset - offsetToDataBlock;
         ASSERT(offsetToData + rawRes.m_FileSize <= rawBif.m_DataBlock.size());
 
         res.m_Data.resize(rawRes.m_FileSize);
