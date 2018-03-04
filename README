@@ -1,0 +1,12 @@
+This is a cross-platform library written in C++ which allows developers to read many of the critical file types used by Neverwinter Nights 1.69 / 1.74. It compiles and runs on Windows and Linux on x86 processors. There will probably be issues on ARM processors.
+
+Check the examples folder to see how the library is used.
+
+The supported file types are:
+
+- GFF (bic, itp, etc)
+- ERF (hak, mod, sav, etc)
+- KEY
+- BIF
+
+The library is completely free for anyone to copy, use, and change with or without attribution.
