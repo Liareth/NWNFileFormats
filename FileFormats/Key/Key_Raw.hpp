@@ -10,10 +10,6 @@ namespace FileFormats::Key::Raw {
 // Refer to https://wiki.neverwintervault.org/pages/viewpage.action?pageId=327727
 // Specifically, https://wiki.neverwintervault.org/download/attachments/327727/Bioware_Aurora_KeyBIF_Format.pdf?api=v2
 // Any references to sections in code comments below will refer to this file.
-//
-// Note that while these structures are the 'raw types', in some cases I have substituted the <size> <contents>
-// pattern with std::vector<> or std::string and I have removed the extra size member. This is to avoid the
-// manual memory management requirements, e.g. so we don't have to allocate and deallocate a char array ourselves.
 
 // A Key file is an index of all the resources contained within a set of BIF files. The key file contains
 // information as to which BIFs it indexes for and what resources are contained in those BIFs.
