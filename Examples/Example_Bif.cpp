@@ -54,6 +54,17 @@ int BifExample(char* path)
         return 1;
     }
 
+    Friendly::Bif bif(rawBif);
+
+    std::printf("\nResources:\n");
+
+    for (auto const& kvp : bif.GetResources())
+    {
+        // kvp.first = id
+        // kvp.second = Friendly::BifResource
+        std::printf("\n%s [%u]: %zu bytes", StringFromResourceType(kvp.second.m_ResourceType), kvp.first, kvp.second.m_Data.size());
+    }
+
     return 0;
 }
 
