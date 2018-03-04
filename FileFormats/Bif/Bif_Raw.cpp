@@ -58,7 +58,7 @@ void Bif::ReadDataBlock(std::byte const* data, std::size_t bytesCount)
     offset += m_Header.m_VariableResourceCount * sizeof(BifVariableResource);
     offset += m_Header.m_FixedResourceCount * sizeof(BifFixedResource);
 
-    std::uint32_t count = bytesCount - offset;
+    std::size_t count = bytesCount - offset;
     ReadGenericOffsetable(data + offset, count, m_DataBlock);
 }
 
