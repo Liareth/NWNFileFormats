@@ -6,6 +6,8 @@
 
 #if OS_WINDOWS
     #include "Windows.h"
+#else
+    #include <sys/stat.h>
 #endif
 
 namespace {
@@ -35,16 +37,18 @@ bool ReadAllButes(const char* path, std::vector<std::byte>* out)
 // Recursively make the provided directory.
 void RecursivelyEnsureDir(std::string const& dir)
 {
-#if OS_WINDOWS
     for (std::size_t slashIndex = dir.find_first_of("\\/");
         slashIndex != std::string::npos;
         slashIndex = dir.find_first_of("\\/", slashIndex + 1))
     {
-        CreateDirectoryA(dir.substr(0, slashIndex).c_str(), NULL);
-    }
+        std::string dirToMake = dir.substr(0, slashIndex);
+
+#if OS_WINDOWS
+        CreateDirectoryA(dirToMake.c_str(), NULL);
 #else
-    ASSERT_FAIL();
+        mkdir(dirToMake.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 #endif
+    }
 }
 
 int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath);
