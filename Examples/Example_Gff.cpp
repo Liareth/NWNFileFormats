@@ -89,7 +89,7 @@ void GffExamplePrintVarsAndTag(Gff const& gff)
         for (std::size_t i = 0; i < entries.size(); ++i)
         {
             GffStruct const& entry = entries[i];
-            std::printf("\nVariable #%llu\n", i);
+            std::printf("\nVariable #%zu\n", i);
 
             Type_CExoString name;
             entry.ReadField("Name", &name);
@@ -190,13 +190,13 @@ void GffExamplePrintGff_r(GffStruct const& element, int depth)
         {
             Type_DWORD64 value;
             element.ReadField(kvp, &value);
-            std::printf("\n%*c%s: [DWORD64] %llu", depth, ' ', kvp.first.c_str(), value);
+            std::printf("\n%*c%s: [DWORD64] %lu", depth, ' ', kvp.first.c_str(), value);
         }
         else if (kvp.second.first == Raw::GffField::Type::INT64)
         {
             Type_INT64 value;
             element.ReadField(kvp, &value);
-            std::printf("\n%*c%s: [INT64] %lld", depth, ' ', kvp.first.c_str(), value);
+            std::printf("\n%*c%s: [INT64] %ld", depth, ' ', kvp.first.c_str(), value);
         }
         else if (kvp.second.first == Raw::GffField::Type::FLOAT)
         {
@@ -266,7 +266,7 @@ void GffExamplePrintGff_r(GffStruct const& element, int depth)
         }
         else
         {
-            std::printf("\n%*c%s: Unknown gff type: %d", depth, ' ', kvp.first.c_str(), kvp.second.first);
+            std::printf("\n%*c%s: Unknown gff type: %u", depth, ' ', kvp.first.c_str(), static_cast<std::uint32_t>(kvp.second.first));
             ASSERT_FAIL();
         }
     }

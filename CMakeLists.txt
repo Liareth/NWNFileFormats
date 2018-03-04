@@ -86,10 +86,7 @@ endif()
 
 if(CMP_GCC OR CMP_CLANG)
     # C++17 support
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-
-    # Various warnings ...
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-format-security")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Wextra -Werror")
 endif()
 
 # Define targets
