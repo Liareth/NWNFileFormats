@@ -63,6 +63,8 @@ void Fail(const char* condition, const char* file, int line, const char* message
     }
 #endif // OS_WINDOWS
 
+    std::fprintf(stderr, "%s", buffer);
+
     bool skipCrash = false;
     bool skipBreak = false;
 
