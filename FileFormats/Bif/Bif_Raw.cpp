@@ -6,6 +6,7 @@ namespace FileFormats::Bif::Raw {
 bool Bif::ReadFromBytes(std::byte const* bytes, std::size_t bytesCount, Bif* out)
 {
     ASSERT(bytes);
+    ASSERT(bytesCount);
     ASSERT(out);
 
     std::memcpy(&out->m_Header, bytes, sizeof(out->m_Header));
