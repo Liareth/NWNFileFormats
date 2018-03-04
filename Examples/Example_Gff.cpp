@@ -3,7 +3,7 @@
 
 namespace {
 
-bool ReadAllButes(const char* path, std::vector<std::byte>* out)
+bool ReadAllBytes(const char* path, std::vector<std::byte>* out)
 {
     FILE* file = std::fopen(path, "rb");
 
@@ -32,7 +32,7 @@ void GffExamplePrintGff_r(FileFormats::Gff::Friendly::GffStruct const& element, 
 int GffExample(char* path)
 {
     std::vector<std::byte> gffData;
-    bool file = ReadAllButes(path, &gffData);
+    bool file = ReadAllBytes(path, &gffData);
 
     if (!file)
     {

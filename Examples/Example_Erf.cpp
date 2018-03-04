@@ -3,7 +3,7 @@
 
 namespace {
 
-bool ReadAllButes(const char* path, std::vector<std::byte>* out)
+bool ReadAllBytes(const char* path, std::vector<std::byte>* out)
 {
     FILE* file = std::fopen(path, "rb");
 
@@ -30,7 +30,7 @@ int ErfExample(char* path);
 int ErfExample(char* path)
 {
     std::vector<std::byte> erfData;
-    bool file = ReadAllButes(path, &erfData);
+    bool file = ReadAllBytes(path, &erfData);
 
     if (!file)
     {

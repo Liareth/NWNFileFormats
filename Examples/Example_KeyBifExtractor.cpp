@@ -12,7 +12,7 @@
 
 namespace {
 
-bool ReadAllButes(const char* path, std::vector<std::byte>* out)
+bool ReadAllBytes(const char* path, std::vector<std::byte>* out)
 {
     FILE* file = std::fopen(path, "rb");
 
@@ -56,7 +56,7 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath);
 int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
 {
     std::vector<std::byte> keyData;
-    bool file = ReadAllButes(keyPath, &keyData);
+    bool file = ReadAllBytes(keyPath, &keyData);
 
     if (!file)
     {
@@ -104,7 +104,7 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
         Key::Friendly::KeyBifReference const& bifref = bifRefs[i];
 
         std::string bifPath = std::string(basePath) + "/" + bifref.m_Path;
-        file = ReadAllButes(bifPath.c_str(), &bifData);
+        file = ReadAllBytes(bifPath.c_str(), &bifData);
         ASSERT(file);
 
         if (!file)

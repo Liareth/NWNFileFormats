@@ -3,7 +3,7 @@
 
 namespace {
 
-bool ReadAllButes(const char* path, std::vector<std::byte>* out)
+bool ReadAllBytes(const char* path, std::vector<std::byte>* out)
 {
     FILE* file = std::fopen(path, "rb");
 
@@ -30,7 +30,7 @@ int KeyExample(char* path);
 int KeyExample(char* path)
 {
     std::vector<std::byte> keyData;
-    bool file = ReadAllButes(path, &keyData);
+    bool file = ReadAllBytes(path, &keyData);
 
     if (!file)
     {

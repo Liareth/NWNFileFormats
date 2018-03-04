@@ -3,7 +3,7 @@
 
 namespace {
 
-bool ReadAllButes(const char* path, std::vector<std::byte>* out)
+bool ReadAllBytes(const char* path, std::vector<std::byte>* out)
 {
     FILE* file = std::fopen(path, "rb");
 
@@ -30,7 +30,7 @@ int BifExample(char* path);
 int BifExample(char* path)
 {
     std::vector<std::byte> bifData;
-    bool file = ReadAllButes(path, &bifData);
+    bool file = ReadAllBytes(path, &bifData);
 
     if (!file)
     {
