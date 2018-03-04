@@ -22,6 +22,9 @@ Key::Key(Raw::Key const& rawKey)
         char const* ptr = rawKey.m_Filenames.data() + offSetIntoFilenameTable;
         reference.m_Path = std::string(ptr, strnlen(ptr, rawFile.m_FilenameSize));
 
+        // Replace all back slash with forward slashes. This avoids any nasty platform-related issues.
+        std::replace(std::begin(reference.m_Path), std::end(reference.m_Path), '\\', '/');
+
         m_ReferencedBifs.emplace_back(std::move(reference));
     }
 
