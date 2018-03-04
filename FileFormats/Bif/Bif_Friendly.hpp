@@ -7,6 +7,9 @@ namespace FileFormats::Bif::Friendly {
 
 struct BifResource
 {
+    // The actual ID listed in the BIF.
+    std::uint32_t m_ResId;
+
     // The resource type.
     Resource::ResourceType m_ResType;
 

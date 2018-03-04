@@ -29,6 +29,10 @@ struct KeyBifReferencedResource
     // The unmodified ResID of the resource.
     std::uint32_t m_ResId;
 
+    // The referenced res ID of the resource.
+    // This ID should match up with ID indexed into the BIF map.
+    std::uint32_t m_ReferencedBifResId;
+
     // The index into m_ReferencedBifs that this resource is inside.
     std::size_t m_ReferencedBifIndex;
 };

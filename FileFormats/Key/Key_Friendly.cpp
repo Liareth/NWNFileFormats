@@ -37,7 +37,9 @@ Key::Key(Raw::Key const& rawKey)
         entry.m_ResRef = std::move(resref);
         entry.m_ResType = rawEntry.m_ResourceType;
         entry.m_ResId = rawEntry.m_ResID;
+        entry.m_ReferencedBifResId = rawEntry.m_ResID & 0x00003FFF; // See Bif_Friendly.cpp for explanation.
         entry.m_ReferencedBifIndex = rawEntry.m_ResID >> 20;
+
         m_ReferencedResources.emplace_back(std::move(entry));
     }
 }

@@ -90,15 +90,6 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
         bifRefs = key.GetReferencedBifs();
     }
 
-    // Iterate over all the buckets now - for each bucket we want to conver to the ID that the BIF will expect.
-    for (auto& kvp : resMap)
-    {
-        for (std::uint32_t i = 0; i < static_cast<std::uint32_t>(kvp.second.size()); ++i)
-        {
-            kvp.second[i].m_ResId = (i << 20 ) + i;
-        }
-    }
-
     // At this point, we have every resource we care about. Now we iterate over every BIF,
     // load it up, get what we want out of it, and close it down again.
     std::size_t totalExtractedResources = 0;
@@ -150,7 +141,7 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
             // We're iterating over every resource that KEY calls out, and that we've assigned
             // to this BIF's bucket.
 
-            auto resInBif = bifResMap.find(bifRefRes.m_ResId);
+            auto resInBif = bifResMap.find(bifRefRes.m_ReferencedBifResId);
             ASSERT(resInBif != std::end(bifResMap));
             std::string resourcePath = bifFolder + bifRefRes.m_ResRef + "." + Resource::StringFromResourceType(bifRefRes.m_ResType);
 
