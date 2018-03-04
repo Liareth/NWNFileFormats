@@ -29,8 +29,8 @@ int KeyExample(char* path);
 
 int KeyExample(char* path)
 {
-    std::vector<std::byte> KeyData;
-    bool file = ReadAllButes(path, &KeyData);
+    std::vector<std::byte> keyData;
+    bool file = ReadAllButes(path, &keyData);
 
     if (!file)
     {
@@ -41,7 +41,7 @@ int KeyExample(char* path)
     using namespace FileFormats::Key;
 
     Raw::Key rawKey;
-    bool loaded = Raw::Key::ReadFromBytes(KeyData.data(), &rawKey);
+    bool loaded = Raw::Key::ReadFromBytes(keyData.data(), &rawKey);
 
     std::printf("Key FileType: %.4s\n", rawKey.m_Header.m_FileType);
     std::printf("Key FileVersion: %.4s\n", rawKey.m_Header.m_FileVersion);
@@ -54,8 +54,8 @@ int KeyExample(char* path)
         return 1;
     }
 
-
     Friendly::Key key(rawKey);
+
     std::printf("\nReferences BIFs:\n");
 
     for (Friendly::KeyBifReference const& ref : key.GetReferencedBifs())
