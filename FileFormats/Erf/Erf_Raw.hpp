@@ -1,10 +1,11 @@
 #pragma once
 
+#include "FileFormats/Resource.hpp"
+
+#include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>
-
-#include "FileFormats/Resource.hpp"
 
 namespace FileFormats::Erf::Raw {
 

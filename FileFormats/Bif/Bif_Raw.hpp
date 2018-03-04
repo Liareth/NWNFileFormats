@@ -2,6 +2,7 @@
 
 #include "FileFormats/Resource.hpp"
 
+#include <cstddef>
 #include <cstdint>
 #include <vector>
 

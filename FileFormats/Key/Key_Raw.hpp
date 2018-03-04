@@ -2,7 +2,7 @@
 
 #include "FileFormats/Resource.hpp"
 
-#include <cstdint>
+#include <cstddef>
 #include <vector>
 
 namespace FileFormats::Key::Raw {
