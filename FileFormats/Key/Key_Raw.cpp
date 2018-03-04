@@ -1,6 +1,8 @@
 #include "FileFormats/Key/Key_Raw.hpp"
 #include "Utility/Assert.hpp"
 
+#include <cstring>
+
 namespace FileFormats::Key::Raw {
 
 bool Key::ReadFromBytes(std::byte const* bytes, Key* out)

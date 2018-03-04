@@ -2,6 +2,7 @@
 #include "Utility/Assert.hpp"
 
 #include <algorithm>
+#include <cstring>
 
 namespace FileFormats::Erf::Friendly {
 
@@ -21,7 +22,7 @@ Erf::Erf(Raw::Erf const& rawErf)
         Raw::ErfKey const& rawKey = rawErf.m_Keys[i];
         Raw::ErfResource const& rawRes = rawErf.m_Resources[i];
 
-        std::string resref = std::string(rawKey.m_ResRef, rawKey.m_ResRef + strnlen_s(rawKey.m_ResRef, 16));
+        std::string resref = std::string(rawKey.m_ResRef, rawKey.m_ResRef + strnlen(rawKey.m_ResRef, 16));
 
         // NWN is case insensitive and cases are mixed like crazy in the official modules.
         // We just do the conversion to lower here to simplify things.

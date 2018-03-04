@@ -1,6 +1,8 @@
 #include "FileFormats/Gff/Gff_Raw.hpp"
 #include "Utility/Assert.hpp"
 
+#include <cstring>
+
 namespace FileFormats::Gff::Raw {
 
 bool Gff::ReadFromBytes(std::byte const* bytes, Gff* out)

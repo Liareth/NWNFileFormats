@@ -1,7 +1,11 @@
 #include "FileFormats/Resource.hpp"
 #include "Utility/Assert.hpp"
 
-#include <string>
+#if OS_WINDOWS
+    #include <cstring>
+#else
+    #include <strings.h>
+#endif
 
 namespace FileFormats::Resource {
 
@@ -65,10 +69,10 @@ ResourceContentType ResourceContentTypeFromResourceType(ResourceType res)
 
 ResourceType ResourceTypeFromString(char const* str)
 {
-#if CMP_MSVC
+#if CMP_MSVC && OS_WINDOWS
     #define CASE_INSENSITIVE_CMP _stricmp
 #else
-    #define CASE_INSENSITIVE_CMP stricmp
+    #define CASE_INSENSITIVE_CMP strcasecmp
 #endif
 
     if (CASE_INSENSITIVE_CMP(str, "bmp") == 0) return ResourceType::BMP;

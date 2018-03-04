@@ -1,5 +1,7 @@
 #include "FileFormats/Gff/Gff_Friendly.hpp"
 
+#include <cstring>
+
 namespace FileFormats::Gff::Friendly {
 
 GffStruct::GffStruct(Raw::GffStruct const& rawStruct, Raw::Gff const& rawGff)
@@ -51,7 +53,7 @@ void GffStruct::ConstructInternal(std::vector<Raw::GffField> const& rawFields, R
     for (Raw::GffField const& rawField : rawFields)
     {
         char const* rawLabel = rawGff.m_Labels[rawField.m_LabelIndex].m_Label;
-        std::string label = std::string(rawLabel, rawLabel + strnlen_s(rawLabel, 16));
+        std::string label = std::string(rawLabel, rawLabel + strnlen(rawLabel, 16));
         ASSERT(m_Fields.find(label) == std::end(m_Fields));
 
         switch (rawField.m_Type)

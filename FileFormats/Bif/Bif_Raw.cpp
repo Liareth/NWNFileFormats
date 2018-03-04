@@ -1,6 +1,8 @@
 #include "FileFormats/Bif/Bif_Raw.hpp"
 #include "Utility/Assert.hpp"
 
+#include <cstring>
+
 namespace FileFormats::Bif::Raw {
 
 bool Bif::ReadFromBytes(std::byte const* bytes, std::size_t bytesCount, Bif* out)

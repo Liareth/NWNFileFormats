@@ -2,6 +2,7 @@
 #include "Utility/Assert.hpp"
 
 #include <algorithm>
+#include <cstring>
 
 namespace FileFormats::Key::Friendly {
 
@@ -19,7 +20,7 @@ Key::Key(Raw::Key const& rawKey)
         ASSERT(offSetStartIntoFilenameTable + offSetIntoFilenameTable + rawFile.m_FilenameSize <= rawKey.m_Header.m_OffsetToKeyTable);
 
         char const* ptr = rawKey.m_Filenames.data() + offSetIntoFilenameTable;
-        reference.m_Path = std::string(ptr, strnlen_s(ptr, rawFile.m_FilenameSize));
+        reference.m_Path = std::string(ptr, strnlen(ptr, rawFile.m_FilenameSize));
 
         m_ReferencedBifs.emplace_back(std::move(reference));
     }
@@ -27,7 +28,7 @@ Key::Key(Raw::Key const& rawKey)
     // Get the references resources.
     for (Raw::KeyEntry const& rawEntry : rawKey.m_Entries)
     {
-        std::string resref = std::string(rawEntry.m_ResRef, rawEntry.m_ResRef + strnlen_s(rawEntry.m_ResRef, 16));
+        std::string resref = std::string(rawEntry.m_ResRef, rawEntry.m_ResRef + strnlen(rawEntry.m_ResRef, 16));
 
         // NWN is case insensitive and cases are mixed like crazy in the official modules.
         // We just do the conversion to lower here to simplify things.

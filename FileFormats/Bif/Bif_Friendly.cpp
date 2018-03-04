@@ -1,6 +1,8 @@
 #include "FileFormats/Bif/Bif_Friendly.hpp"
 #include "Utility/Assert.hpp"
 
+#include <cstring>
+
 namespace FileFormats::Bif::Friendly {
 
 Bif::Bif(Raw::Bif const& rawBif)

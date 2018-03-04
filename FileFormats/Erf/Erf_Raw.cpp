@@ -1,6 +1,8 @@
 #include "FileFormats/Erf/Erf_Raw.hpp"
 #include "Utility/Assert.hpp"
 
+#include <cstring>
+
 namespace FileFormats::Erf::Raw {
 
 bool Erf::ReadFromBytes(std::byte const* bytes, std::size_t bytesCount, Erf* out)
