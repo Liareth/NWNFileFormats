@@ -184,7 +184,7 @@ char const* StringFromResourceType(ResourceType res)
     else if (res == ResourceType::KEY) return "key";
 
     ASSERT_FAIL_MSG("Unknown resource type.");
-    return nullptr;
+    return "unk";
 }
 
 }
