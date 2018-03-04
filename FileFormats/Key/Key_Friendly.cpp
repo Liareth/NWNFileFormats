@@ -19,7 +19,7 @@ Key::Key(Raw::Key const& rawKey)
         ASSERT(offSetStartIntoFilenameTable + offSetIntoFilenameTable + rawFile.m_FilenameSize <= rawKey.m_Header.m_OffsetToKeyTable);
 
         char const* ptr = rawKey.m_Filenames.data() + offSetIntoFilenameTable;
-        reference.m_Path = std::string(ptr, ptr + rawFile.m_FilenameSize);
+        reference.m_Path = std::string(ptr, strnlen_s(ptr, rawFile.m_FilenameSize));
 
         m_ReferencedBifs.emplace_back(std::move(reference));
     }
