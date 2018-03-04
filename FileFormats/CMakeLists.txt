@@ -1,5 +1,8 @@
 add_library(FileFormats STATIC
 
+    Bif.hpp
+    Bif/Bif_Raw.cpp Bif/Bif_Raw.hpp
+
     Erf.hpp
     Erf/Erf_Raw.cpp Erf/Erf_Raw.hpp
     Erf/Erf_Friendly.cpp Erf/Erf_Friendly.hpp
