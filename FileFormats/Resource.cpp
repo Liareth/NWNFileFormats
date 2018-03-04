@@ -16,6 +16,13 @@ ResourceContentType ResourceContentTypeFromResourceType(ResourceType res)
     else if (res == ResourceType::TGA) return ResourceContentType::Binary;
     else if (res == ResourceType::WAV) return ResourceContentType::Binary;
     else if (res == ResourceType::PLT) return ResourceContentType::Binary;
+    else if (res == ResourceType::DAT) return ResourceContentType::Binary;
+    else if (res == ResourceType::SHD) return ResourceContentType::Binary; // I think? Could be text. TODO
+    else if (res == ResourceType::WBM) return ResourceContentType::Binary;
+    else if (res == ResourceType::IDS) return ResourceContentType::Binary;
+    else if (res == ResourceType::ERF) return ResourceContentType::Binary;
+    else if (res == ResourceType::BIF) return ResourceContentType::Binary;
+    else if (res == ResourceType::KEY) return ResourceContentType::Binary;
     else if (res == ResourceType::TXT) return ResourceContentType::Text;
     else if (res == ResourceType::NSS) return ResourceContentType::Text;
     else if (res == ResourceType::TWODA) return ResourceContentType::Text;
@@ -45,6 +52,8 @@ ResourceContentType ResourceContentTypeFromResourceType(ResourceType res)
     else if (res == ResourceType::UTW) return ResourceContentType::Gff;
     else if (res == ResourceType::PTM) return ResourceContentType::Gff;
     else if (res == ResourceType::PTT) return ResourceContentType::Gff;
+    else if (res == ResourceType::BAK) return ResourceContentType::Gff;
+    else if (res == ResourceType::XBC) return ResourceContentType::Gff;
     else if (res == ResourceType::MDL) return ResourceContentType::Mdl;
     else if (res == ResourceType::WOK) return ResourceContentType::Mdl;
     else if (res == ResourceType::DWK) return ResourceContentType::Mdl;
@@ -104,6 +113,15 @@ ResourceType ResourceTypeFromString(char const* str)
     else if (CASE_INSENSITIVE_CMP(str, "ndb") == 0) return ResourceType::NDB;
     else if (CASE_INSENSITIVE_CMP(str, "ptm") == 0) return ResourceType::PTM;
     else if (CASE_INSENSITIVE_CMP(str, "ptt") == 0) return ResourceType::PTT;
+    else if (CASE_INSENSITIVE_CMP(str, "bak") == 0) return ResourceType::BAK;
+    else if (CASE_INSENSITIVE_CMP(str, "dat") == 0) return ResourceType::DAT;
+    else if (CASE_INSENSITIVE_CMP(str, "shd") == 0) return ResourceType::SHD;
+    else if (CASE_INSENSITIVE_CMP(str, "xbc") == 0) return ResourceType::XBC;
+    else if (CASE_INSENSITIVE_CMP(str, "wbm") == 0) return ResourceType::WBM;
+    else if (CASE_INSENSITIVE_CMP(str, "ids") == 0) return ResourceType::IDS;
+    else if (CASE_INSENSITIVE_CMP(str, "erf") == 0) return ResourceType::ERF;
+    else if (CASE_INSENSITIVE_CMP(str, "bif") == 0) return ResourceType::BIF;
+    else if (CASE_INSENSITIVE_CMP(str, "key") == 0) return ResourceType::KEY;
 
     ASSERT_FAIL_MSG("Unknown resource type.");
     return ResourceType::INVALID;
@@ -155,6 +173,15 @@ char const* StringFromResourceType(ResourceType res)
     else if (res == ResourceType::NDB) return "ndb";
     else if (res == ResourceType::PTM) return "ptm";
     else if (res == ResourceType::PTT) return "ptt";
+    else if (res == ResourceType::BAK) return "bak";
+    else if (res == ResourceType::DAT) return "dat";
+    else if (res == ResourceType::SHD) return "shd";
+    else if (res == ResourceType::XBC) return "xbc";
+    else if (res == ResourceType::WBM) return "wbm";
+    else if (res == ResourceType::IDS) return "ids";
+    else if (res == ResourceType::ERF) return "erf";
+    else if (res == ResourceType::BIF) return "bif";
+    else if (res == ResourceType::KEY) return "key";
 
     ASSERT_FAIL_MSG("Unknown resource type.");
     return nullptr;

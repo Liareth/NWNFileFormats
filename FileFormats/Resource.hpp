@@ -143,7 +143,34 @@ enum class ResourceType : std::uint16_t
     PTM = 2065, // gff
 
     // Plot Wizard Blueprint
-    PTT = 2066 // gff
+    PTT = 2066, // gff
+
+    // Backup file (for player files)
+    BAK = 2067, // gff
+
+    // Digital Distribution Dat File
+    DAT = 2068, // binary
+
+    // Shader files
+    SHD = 2069, // binary (I think? Could be text. TODO)
+
+    // Backup character files that have already been converted in the oldservervault, rename to BIC to use
+    XBC = 2070, // gff
+
+    // Webm files
+    WBM = 2071, // binary
+
+    // Legacy BG Script File
+    IDS = 9996, // binary
+
+    // Encapsulated file
+    ERF = 9997, // binary
+
+    // BIFF file
+    BIF = 9998, // binary
+
+    // Key file
+    KEY = 9999 // binary
 };
 
 enum class ResourceContentType
