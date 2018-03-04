@@ -2,6 +2,7 @@ add_library(FileFormats STATIC
 
     Bif.hpp
     Bif/Bif_Raw.cpp Bif/Bif_Raw.hpp
+    Bif/Bif_Friendly.cpp Bif/Bif_Friendly.hpp
 
     Erf.hpp
     Erf/Erf_Raw.cpp Erf/Erf_Raw.hpp
