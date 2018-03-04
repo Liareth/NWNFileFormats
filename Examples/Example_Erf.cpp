@@ -67,26 +67,12 @@ int ErfExample(char* path)
         std::printf("\nDescription: %s\n", descriptions[0].m_String.c_str());
     }
 
-    Friendly::Erf::ErfResourceMap const& resources = erf.GetResources();
-
     std::printf("\nResources:\n");
 
-    for (auto const& resrefBucket : resources)
+    for (Friendly::ErfResource const& resource : erf.GetResources())
     {
-        using namespace FileFormats::Resource;
-
-        std::string const& resref = resrefBucket.first;
-
-        std::unordered_map<ResourceType, Friendly::ErfResource> const& bucket = resrefBucket.second;
-        std::printf("\n%s", resref.c_str());
-
-        for (auto const& resource : bucket)
-        {
-            std::uint32_t resId = resource.second.m_ResourceId;
-            const char* resType = StringFromResourceType(resource.first);
-            std::size_t resBytes = resource.second.m_Data.size();
-            std::printf("\n %s.%s: %zu bytes [%u] ", resref.c_str(), resType, resBytes, resId);
-        }
+        const char* resType = FileFormats::Resource::StringFromResourceType(resource.m_ResType);
+        std::printf("\n %s.%s: %zu bytes [%u] ", resource.m_ResRef.c_str(), resType, resource.m_Data.size(), resource.m_ResourceId);
     }
 
     return 0;

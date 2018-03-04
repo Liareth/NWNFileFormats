@@ -29,13 +29,9 @@ Erf::Erf(Raw::Erf const& rawErf)
         // We just do the conversion to lower here to simplify things.
         std::transform(std::begin(resref), std::end(resref), std::begin(resref), ::tolower);
 
-        std::unordered_map<Resource::ResourceType, ErfResource>& bucket = m_Resources[resref];
-
-        // Make sure we don't already have a resource sharing this resref of the same type.
-        // This shouldn't be possible in a well-formed ERF.
-        ASSERT(bucket.find(rawKey.m_ResType) == std::end(bucket));
-
         ErfResource resource;
+        resource.m_ResRef = std::move(resref);
+        resource.m_ResType = rawKey.m_ResType;
         resource.m_ResourceId = rawKey.m_ResId;
 
         // Per the spec, the resourceID should match exactly the order that the resources are present in the resource block.
@@ -52,7 +48,7 @@ Erf::Erf(Raw::Erf const& rawErf)
         resource.m_Data.resize(rawRes.m_ResourceSize);
         std::memcpy(resource.m_Data.data(), rawErf.m_ResourceData.data() + offsetIntoResourceData, rawRes.m_ResourceSize);
 
-        bucket.insert(std::make_pair(rawKey.m_ResType, std::move(resource)));
+        m_Resources.emplace_back(std::move(resource));
     }
 }
 
@@ -61,7 +57,7 @@ std::vector<Raw::ErfLocalisedString> const& Erf::GetDescriptions() const
     return m_Descriptions;
 }
 
-Erf::ErfResourceMap const& Erf::GetResources() const
+std::vector<ErfResource> const& Erf::GetResources() const
 {
     return m_Resources;
 }
