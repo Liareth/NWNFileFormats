@@ -7,7 +7,7 @@
 // How to use:
 //
 // Step 1: Load your KEY file into memory.
-// Step 2: Construct a Key as such: FileFormats::Key::Raw::Key::ReadFromBytes(bytes, totalBytes);
+// Step 2: Construct a Key as such: FileFormats::Key::Raw::Key::ReadFromBytes(bytes);
 // Step 3: If user friendly access is desired, construct a Key from FileFormats::Key::Friendly::Key(rawKey).
 // - Referenced BIFs can be accessed by .GetReferencedBifs().
 // - Referenced resources can be accessed by .GetReferencedResources(). They are bucketed as such - resources[resref][type] -> id.
