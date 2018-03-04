@@ -1,7 +1,6 @@
 #pragma once
 
 #include "FileFormats/Erf/Erf_Raw.hpp"
-#include <unordered_map>
 
 namespace FileFormats::Erf::Friendly {
 

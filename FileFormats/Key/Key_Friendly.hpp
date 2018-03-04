@@ -1,9 +1,7 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
-
 #include "FileFormats/Key/Key_Raw.hpp"
+#include <string>
 
 namespace FileFormats::Key::Friendly {
 
