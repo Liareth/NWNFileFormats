@@ -62,7 +62,7 @@ int BifExample(char* path)
     {
         // kvp.first = id
         // kvp.second = Friendly::BifResource
-        std::printf("\n%s [%u]: %zu bytes", StringFromResourceType(kvp.second.m_ResourceType), kvp.first, kvp.second.m_Data.size());
+        std::printf("\n%s [%u]: %zu bytes", StringFromResourceType(kvp.second.m_ResType), kvp.first, kvp.second.m_Data.size());
     }
 
     return 0;

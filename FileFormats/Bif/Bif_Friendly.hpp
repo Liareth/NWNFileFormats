@@ -7,7 +7,10 @@ namespace FileFormats::Bif::Friendly {
 
 struct BifResource
 {
-    Resource::ResourceType m_ResourceType;
+    // The resource type.
+    Resource::ResourceType m_ResType;
+
+    // The raw data associated with this resource.
     std::vector<std::byte> m_Data;
 };
 

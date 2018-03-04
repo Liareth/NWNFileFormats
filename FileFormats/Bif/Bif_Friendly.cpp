@@ -19,7 +19,7 @@ Bif::Bif(Raw::Bif const& rawBif)
         ASSERT(m_Resources.find(rawRes.m_Id) == std::end(m_Resources));
 
         BifResource res;
-        res.m_ResourceType = rawRes.m_ResourceType;
+        res.m_ResType = rawRes.m_ResourceType;
 
         std::size_t offsetToData = rawRes.m_Offset - offsetToDataBlock;
         ASSERT(offsetToData + rawRes.m_FileSize <= rawBif.m_DataBlock.size());

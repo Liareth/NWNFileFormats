@@ -62,10 +62,14 @@ struct BifFixedResource
     // Variable Resource Data block immediately follows the Variable Resource Table.
 
     // A unique ID number. It is generated as follows:
-    // Fixed ID = (x << 20) + (y << 14)
-    // x = [Index of this BIF in its Key file's File Table]
-    // y = [Index of this Resource Entry]
-    //  (<< means bit shift left)
+    // Variable ID = (x << 20) + y
+    // (<< means bit shift left)
+    // y = [Index of this Resource Entry in the BIF]
+    // In the BIFs included with the game CDs, x = y.
+    // In the patch BIFs, x = 0.
+    // This discrepancy in x values does not matter to the
+    // game or toolset because their resource manager
+    // system doesn't care about the value of x in a BIF
     std::uint32_t m_ID;
 
     // The location of the fixed resource data. This is a byte
