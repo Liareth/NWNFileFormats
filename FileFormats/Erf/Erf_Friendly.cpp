@@ -38,6 +38,10 @@ Erf::Erf(Raw::Erf const& rawErf)
         ErfResource resource;
         resource.m_ResourceId = rawKey.m_ResId;
 
+        // Per the spec, the resourceID should match exactly the order that the resources are present in the resource block.
+        // We assert here to ensure that is actually the case.
+        ASSERT(resource.m_ResourceId == i);
+
         // This gives us the offset to the start of the resource data block.
         std::uint32_t offsetToEndOfResources = rawErf.m_Header.m_OffsetToResourceList + (sizeof(Raw::ErfResource) * rawErf.m_Header.m_EntryCount); // End of resources block
 
