@@ -1,31 +1,10 @@
 #include "FileFormats/Bif/Bif_Raw.hpp"
 #include "Utility/Assert.hpp"
+#include "Utility/MemoryMappedFile.hpp"
 
 #include <cstring>
 
 namespace FileFormats::Bif::Raw {
-
-bool Bif::ReadFromBytes(std::byte const* bytes, std::size_t bytesCount, Bif* out)
-{
-    ASSERT(bytes);
-    ASSERT(bytesCount);
-    ASSERT(out);
-
-    std::memcpy(&out->m_Header, bytes, sizeof(out->m_Header));
-
-    if (std::memcmp(out->m_Header.m_FileType, "BIFF", 4) != 0 ||
-        std::memcmp(out->m_Header.m_Version, "V1  ", 4) != 0)
-    {
-        return false;
-    }
-
-    out->ReadVariableResourceTable(bytes);
-    out->ReadFixedResourceTable(bytes);
-    out->ReadDataBlock(bytes, bytesCount);
-
-    return true;
-}
-
 
 namespace {
 
@@ -36,6 +15,105 @@ void ReadGenericOffsetable(std::byte const* bytesWithInitialOffset, std::size_t 
     std::memcpy(out.data(), bytesWithInitialOffset, count * sizeof(T));
 }
 
+}
+
+template <typename T>
+struct Bif::BifDataBlockStorageRAII : public BifDataBlockStorage
+{
+    T m_Data;
+    BifDataBlockStorageRAII(T&& data) : m_Data(std::forward<T>(data)) { }
+    virtual ~BifDataBlockStorageRAII() { }
+};
+
+bool Bif::ReadFromBytes(std::byte const* bytes, std::size_t bytesCount, Bif* out)
+{
+    ASSERT(bytesCount);
+
+    if (!out->ConstructInternal(bytes))
+    {
+        return false;
+    }
+
+    std::uint32_t offset = out->m_Header.m_VariableTableOffset;
+    offset += out->m_Header.m_VariableResourceCount * sizeof(BifVariableResource);
+    offset += out->m_Header.m_FixedResourceCount * sizeof(BifFixedResource);
+
+    std::unique_ptr<OwningDataBlock> owningBlock = std::make_unique<OwningDataBlock>();
+    ReadGenericOffsetable(bytes + offset, bytesCount - offset, owningBlock->m_Data);
+    out->m_DataBlock = std::move(owningBlock);
+
+    return true;
+}
+
+bool Bif::ReadFromByteVector(std::vector<std::byte>&& bytes, Bif* out)
+{
+    if (!out->ConstructInternal(bytes.data()))
+    {
+        return false;
+    }
+
+    std::uint32_t offset = out->m_Header.m_VariableTableOffset;
+    offset += out->m_Header.m_VariableResourceCount * sizeof(BifVariableResource);
+    offset += out->m_Header.m_FixedResourceCount * sizeof(BifFixedResource);
+
+    std::unique_ptr<NonOwningDataBlock> nonOwningBlock = std::make_unique<NonOwningDataBlock>();
+    nonOwningBlock->m_Data = bytes.data() + offset;
+    nonOwningBlock->m_DataLength = bytes.size() - offset;
+    out->m_DataBlock = std::move(nonOwningBlock);
+
+    using StorageType = std::vector<std::byte>;
+    out->m_DataBlockStorage = std::make_unique<BifDataBlockStorageRAII<StorageType>>(std::forward<StorageType>(bytes));
+
+    return true;
+}
+
+bool Bif::ReadFromFile(char const* path, Bif* out)
+{
+    MemoryMappedFile memmap;
+    bool loaded = MemoryMappedFile::MemoryMap(path, &memmap);
+
+    if (!loaded)
+    {
+        return false;
+    }
+
+    DataBlock const& memmapped = memmap.GetDataBlock();
+
+    if (!out->ConstructInternal(memmapped.GetData()))
+    {
+        return false;
+    }
+
+    std::uint32_t offset = out->m_Header.m_VariableTableOffset;
+    offset += out->m_Header.m_VariableResourceCount * sizeof(BifVariableResource);
+    offset += out->m_Header.m_FixedResourceCount * sizeof(BifFixedResource);
+
+    std::unique_ptr<NonOwningDataBlock> nonOwningBlock = std::make_unique<NonOwningDataBlock>();
+    nonOwningBlock->m_Data = memmapped.GetData() + offset;
+    nonOwningBlock->m_DataLength = memmapped.GetDataLength() - offset;
+    out->m_DataBlock = std::move(nonOwningBlock);
+
+    out->m_DataBlockStorage = std::make_unique<BifDataBlockStorageRAII<MemoryMappedFile>>(std::move(memmap));
+
+    return true;
+}
+
+bool Bif::ConstructInternal(std::byte const* bytes)
+{
+    ASSERT(bytes);
+
+    std::memcpy(&m_Header, bytes, sizeof(m_Header));
+
+    if (std::memcmp(m_Header.m_FileType, "BIFF", 4) != 0 ||
+        std::memcmp(m_Header.m_Version, "V1  ", 4) != 0)
+    {
+        return false;
+    }
+
+    ReadVariableResourceTable(bytes);
+    ReadFixedResourceTable(bytes);
+
+    return true;
 }
 
 void Bif::ReadVariableResourceTable(std::byte const* data)
@@ -52,16 +130,6 @@ void Bif::ReadFixedResourceTable(std::byte const* data)
 
     std::uint32_t count = m_Header.m_FixedResourceCount;
     ReadGenericOffsetable(data + offset, count, m_FixedResourceTable);
-}
-
-void Bif::ReadDataBlock(std::byte const* data, std::size_t bytesCount)
-{
-    std::uint32_t offset = m_Header.m_VariableTableOffset;
-    offset += m_Header.m_VariableResourceCount * sizeof(BifVariableResource);
-    offset += m_Header.m_FixedResourceCount * sizeof(BifFixedResource);
-
-    std::size_t count = bytesCount - offset;
-    ReadGenericOffsetable(data + offset, count, m_DataBlock);
 }
 
 }

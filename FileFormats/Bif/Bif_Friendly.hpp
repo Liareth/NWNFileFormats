@@ -6,6 +6,8 @@
 #include <optional>
 #include <unordered_map>
 
+struct DataBlock;
+
 namespace FileFormats::Bif::Friendly {
 
 struct BifResource
@@ -16,39 +18,8 @@ struct BifResource
     // The resource type.
     Resource::ResourceType m_ResType;
 
-    // Returns a non-owning pointer to the resource data.
-    virtual std::byte const* GetData() = 0;
-
-    // Returns the length of the resource data.
-    virtual std::size_t GetDataLength() = 0;
-
-    virtual ~BifResource() = 0 {};
-};
-
-// A resource that is loaded up front - all bytes.
-struct BifFrontLoadedResource : public BifResource
-{
-    // The raw data associated with this resource.
-    std::vector<std::byte> m_Data;
-
-    virtual std::byte const* GetData() override { return m_Data.data(); }
-    virtual std::size_t GetDataLength() override { return m_Data.size(); }
-    virtual ~BifFrontLoadedResource() {};
-};
-
-// A resource that references the bytes from the underlying raw structure.
-struct BifStreamedResource : public BifResource
-{
-    // The raw data associated with this resource.
-    // This is a NON-OWNING pointer.
-    std::byte const* m_Data;
-
-    // And the length.
-    std::size_t m_DataLength;
-
-    virtual std::byte const* GetData() override { return m_Data; }
-    virtual std::size_t GetDataLength() override { return m_DataLength; }
-    virtual ~BifStreamedResource() {};
+    // The underlying data for this resource.
+    std::unique_ptr<DataBlock> m_DataBlock;
 };
 
 // This is a user friendly wrapper around the Bif data.
@@ -64,7 +35,7 @@ public:
     // the memory usage significantly.
     Bif(Raw::Bif&& rawBif);
 
-    using BifResourceMap = std::unordered_map<std::uint32_t, std::unique_ptr<BifResource>>;
+    using BifResourceMap = std::unordered_map<std::uint32_t, BifResource>;
     BifResourceMap const& GetResources() const;
 
 private:

@@ -1,5 +1,6 @@
 #include "FileFormats/Bif/Bif_Friendly.hpp"
 #include "Utility/Assert.hpp"
+#include "Utility/DataBlock.hpp"
 
 #include <cstring>
 
@@ -28,28 +29,28 @@ void Bif::ConstructInternal(Raw::Bif const& rawBif)
     {
         ASSERT(m_Resources.find(rawRes.m_Id) == std::end(m_Resources));
 
-        std::unique_ptr<BifResource> res;
+        BifResource res;
+
+        res.m_ResId = rawRes.m_Id;
+        res.m_ResType = rawRes.m_ResourceType;
 
         std::size_t offsetToData = rawRes.m_Offset - offsetToDataBlock;
-        ASSERT(offsetToData + rawRes.m_FileSize <= rawBif.m_DataBlock.size());
+        ASSERT(offsetToData + rawRes.m_FileSize <= rawBif.m_DataBlock->GetDataLength());
 
         if (m_RawBif.has_value())
         {
-            std::unique_ptr<BifStreamedResource> streamedRes = std::make_unique<BifStreamedResource>();
-            streamedRes->m_Data = rawBif.m_DataBlock.data() + offsetToData;
-            streamedRes->m_DataLength = rawRes.m_FileSize;
-            res = std::move(streamedRes);
+            std::unique_ptr<NonOwningDataBlock> db = std::make_unique<NonOwningDataBlock>();
+            db->m_Data = rawBif.m_DataBlock->GetData() + offsetToData;
+            db->m_DataLength = rawRes.m_FileSize;
+            res.m_DataBlock = std::move(db);
         }
         else
         {
-            std::unique_ptr<BifFrontLoadedResource> frontLoadedRes = std::make_unique<BifFrontLoadedResource>();
-            frontLoadedRes->m_Data.resize(rawRes.m_FileSize);
-            std::memcpy(frontLoadedRes->m_Data.data(), rawBif.m_DataBlock.data() + offsetToData, rawRes.m_FileSize);
-            res = std::move(frontLoadedRes);
+            std::unique_ptr<OwningDataBlock> db = std::make_unique<OwningDataBlock>();
+            db->m_Data.resize(rawRes.m_FileSize);
+            std::memcpy(db->m_Data.data(), rawBif.m_DataBlock->GetData() + offsetToData, rawRes.m_FileSize);
+            res.m_DataBlock = std::move(db);
         }
-
-        res->m_ResId = rawRes.m_Id;
-        res->m_ResType = rawRes.m_ResourceType;
 
         // The spec outlines this the m_ReferencedBifResId as (x << 20) + y, where y is the index, and x = y normally and 0
         // for patch BIFs. However, none of the BIFs present in 1.69 or 1.74 seem to follow this rule - x always equals y.

@@ -3,45 +3,16 @@
 
 namespace {
 
-bool ReadAllBytes(const char* path, std::vector<std::byte>* out)
-{
-    FILE* file = std::fopen(path, "rb");
-
-    if (file)
-    {
-        std::fseek(file, 0, SEEK_END);
-        std::size_t fileLen = ftell(file);
-        std::fseek(file, 0, SEEK_SET);
-
-        std::size_t outSize = out->size();
-        out->resize(outSize + fileLen);
-        std::size_t read = std::fread(out->data() + outSize, 1, fileLen, file);
-        ASSERT(read == fileLen);
-
-        std::fclose(file);
-        return true;
-    }
-
-    return false;
-}
-
 int BifExample(char* path);
 
 int BifExample(char* path)
 {
-    std::vector<std::byte> bifData;
-    bool file = ReadAllBytes(path, &bifData);
-
-    if (!file)
-    {
-        std::printf("Failed to open file %s.\n", path);
-        return 1;
-    }
-
     using namespace FileFormats::Bif;
 
     Raw::Bif rawBif;
-    bool loaded = Raw::Bif::ReadFromBytes(bifData.data(), bifData.size(), &rawBif);
+    bool loaded = Raw::Bif::ReadFromFile(path, &rawBif);
+
+    // Alternatively, we could have loaded the file ourselves and use 'ReadFromByteVector' or 'ReadFromBytes'.
 
     std::printf("BIF FileType: %.4s\n", rawBif.m_Header.m_FileType);
     std::printf("BIF Version: %.4s\n", rawBif.m_Header.m_Version);
@@ -54,7 +25,9 @@ int BifExample(char* path)
         return 1;
     }
 
-    Friendly::Bif bif(rawBif);
+    // Remember to use std::move here.
+    // If you don't, you're gonna use double the memory because everything is going to get copied.
+    Friendly::Bif bif(std::move(rawBif));
 
     std::printf("\nResources:\n");
 
@@ -62,7 +35,7 @@ int BifExample(char* path)
     {
         // kvp.first = id
         // kvp.second = Friendly::BifResource
-        std::printf("\n%s [%u | %u]: %zu bytes", StringFromResourceType(kvp.second->m_ResType), kvp.first, kvp.second->m_ResId, kvp.second->GetDataLength());
+        std::printf("\n%s [%u | %u]: %zu bytes", StringFromResourceType(kvp.second.m_ResType), kvp.first, kvp.second.m_ResId, kvp.second.m_DataBlock->GetDataLength());
     }
 
     return 0;

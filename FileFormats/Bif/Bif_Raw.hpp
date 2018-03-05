@@ -1,9 +1,12 @@
 #pragma once
 
 #include "FileFormats/Resource.hpp"
+#include "Utility/DataBlock.hpp"
 
 #include <cstddef>
 #include <cstdint>
+#include <optional>
+#include <memory>
 #include <vector>
 
 namespace FileFormats::Bif::Raw {
@@ -88,10 +91,11 @@ struct BifFixedResource
     std::uint32_t m_ResourceType;
 };
 
-using BifData = std::byte;
+using BifDataBlock = DataBlock;
 
-struct Bif
+class Bif
 {
+public:
     BifHeader m_Header;
     std::vector<BifVariableResource> m_VariableResourceTable;
     std::vector<BifFixedResource> m_FixedResourceTable;
@@ -99,14 +103,30 @@ struct Bif
     // NOTE: In the spec, this is separated into a variable resource data block and a fixed resource data block.
     // Unfortunately, there's nothing in the header that allows us to observe the size of each of these blocks.
     // Therefore, I am just rolling each block into one big vector for the purposes of this.
-    std::vector<BifData> m_DataBlock;
+    std::unique_ptr<BifDataBlock> m_DataBlock;
 
+    // Constructs a Bif from a non-owning pointer. Memory usage may be high.
     static bool ReadFromBytes(std::byte const* bytes, std::size_t bytesCount, Bif* out);
 
+    // Constructs a Bif from a vector of bytes which we have taken ownership of. Memory usage will be moderate.
+    static bool ReadFromByteVector(std::vector<std::byte>&& bytes, Bif* out);
+
+    // Constructs a Bif from a file. The file with be memory mapped so memory usage will be ideal.
+    static bool ReadFromFile(char const* path, Bif* out);
+
 private:
+
+    // This is an RAII wrapper around the various methods of loading a BIF that we have.
+    // - If by bytes, this is nullptr.
+    // - If by byte vector, this will contain the vector.
+    // - If by file, this will contain a handle to the file (since we're memory mapping).
+    struct BifDataBlockStorage { virtual ~BifDataBlockStorage() = 0 {} };
+    template <typename T> struct BifDataBlockStorageRAII;
+    std::unique_ptr<BifDataBlockStorage> m_DataBlockStorage;
+
+    bool ConstructInternal(std::byte const* bytes);
     void ReadVariableResourceTable(std::byte const* data);
     void ReadFixedResourceTable(std::byte const* data);
-    void ReadDataBlock(std::byte const* data, std::size_t bytesCount);
 };
 
 }

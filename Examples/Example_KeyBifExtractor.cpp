@@ -94,32 +94,22 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
         bifRefs = key.GetReferencedBifs();
     }
 
-    // At this point, we have every resource we care about. Now we iterate over every BIF,
-    // load it up, get what we want out of it, and close it down again.
+    // At this point, we have every resource we care about. Now we iterate over every BIF that the KEY references,
+    // load it up, then extract all the referenced materials to the output path.
     std::size_t totalExtractedResources = 0;
-    std::vector<std::byte> bifData; // Stored outside to avoid big reallocations each time.
 
     for (std::size_t i = 0; i < bifRefs.size(); ++i)
     {
         Key::Friendly::KeyBifReference const& bifref = bifRefs[i];
-
         std::string bifPath = std::string(basePath) + "/" + bifref.m_Path;
-        file = ReadAllBytes(bifPath.c_str(), &bifData);
-        ASSERT(file);
-
-        if (!file)
-        {
-            std::printf("Failed to open BIF file %s.\n", bifPath.c_str());
-            continue;
-        }
 
         Bif::Raw::Bif rawBif;
-        bool loaded = Bif::Raw::Bif::ReadFromBytes(bifData.data(), bifData.size(), &rawBif);
+        bool loaded = Bif::Raw::Bif::ReadFromFile(bifPath.c_str(), &rawBif);
         ASSERT(loaded);
 
         if (!loaded)
         {
-            std::printf("Failed to deserialise the BIF file %s.\n", bifPath.c_str());
+            std::printf("Failed to load the BIF file %s.\n", bifPath.c_str());
             continue;
         }
 
@@ -135,16 +125,14 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
         std::string bifFolder = std::string(outPath) + "/" + bifFileName + "/";
         RecursivelyEnsureDir(bifFolder);
 
-        Bif::Friendly::Bif bif(rawBif);
+        Bif::Friendly::Bif bif(std::move(rawBif));
         std::size_t extractedResources = 0;
 
         Bif::Friendly::Bif::BifResourceMap const& bifResMap = bif.GetResources();
 
+        // We're iterating over every resource that KEY calls out and that we've assigned to this BIF's bucket.
         for (Key::Friendly::KeyBifReferencedResource const& bifRefRes : resMap[i])
         {
-            // We're iterating over every resource that KEY calls out, and that we've assigned
-            // to this BIF's bucket.
-
             auto resInBif = bifResMap.find(bifRefRes.m_ReferencedBifResId);
             ASSERT(resInBif != std::end(bifResMap));
             std::string resourcePath = bifFolder + bifRefRes.m_ResRef + "." + Resource::StringFromResourceType(bifRefRes.m_ResType);
@@ -158,7 +146,7 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
                 continue;
             }
 
-            std::fwrite(resInBif->second->GetData(), resInBif->second->GetDataLength(), 1, resFile);
+            std::fwrite(resInBif->second.m_DataBlock->GetData(), resInBif->second.m_DataBlock->GetDataLength(), 1, resFile);
             std::fclose(resFile);
 
             ++extractedResources;
@@ -166,8 +154,6 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
 
         std::printf("Extracted %zu resources from BIF %s to %s\n", extractedResources, bifPath.c_str(), bifFolder.c_str());
         totalExtractedResources += extractedResources;
-
-        bifData.clear();
     }
 
     std::printf("Extracted %zu resources total referenced by KEY %s\n", totalExtractedResources, keyPath);
