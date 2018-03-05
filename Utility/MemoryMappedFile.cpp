@@ -36,7 +36,7 @@ struct MemoryMappedFile::PlatformImpl
     PlatformImpl() : m_FileDescriptor(-1), m_Ptr(nullptr) { }
     ~PlatformImpl()
     {
-        if (m_Ptr)
+        if (m_Ptr == MAP_FAILED)
         {
             munmap(m_Ptr, m_PtrLength);
         }
