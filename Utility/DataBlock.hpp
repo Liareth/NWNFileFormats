@@ -13,7 +13,7 @@ struct DataBlock
     // Returns the length of the data.
     virtual std::size_t GetDataLength() const  = 0;
 
-    virtual ~DataBlock() = 0 {};
+    virtual ~DataBlock() {};
 };
 
 struct OwningDataBlock : public DataBlock

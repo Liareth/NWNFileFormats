@@ -120,7 +120,7 @@ private:
     // - If by bytes, this is nullptr.
     // - If by byte vector, this will contain the vector.
     // - If by file, this will contain a handle to the file (since we're memory mapping).
-    struct BifDataBlockStorage { virtual ~BifDataBlockStorage() = 0 {} };
+    struct BifDataBlockStorage { virtual ~BifDataBlockStorage() {} };
     template <typename T> struct BifDataBlockStorageRAII;
     std::unique_ptr<BifDataBlockStorage> m_DataBlockStorage;
 
