@@ -7,6 +7,16 @@ namespace FileFormats::Bif::Friendly {
 
 Bif::Bif(Raw::Bif const& rawBif)
 {
+    ConstructInternal(rawBif);
+}
+
+Bif::Bif(Raw::Bif&& rawBif) : m_RawBif(std::forward<Raw::Bif>(rawBif))
+{
+    ConstructInternal(m_RawBif.value());
+}
+
+void Bif::ConstructInternal(Raw::Bif const& rawBif)
+{
     ASSERT(!rawBif.m_Header.m_FixedResourceCount);
 
     // Calculate the offset into the data block manually ...
@@ -18,15 +28,28 @@ Bif::Bif(Raw::Bif const& rawBif)
     {
         ASSERT(m_Resources.find(rawRes.m_Id) == std::end(m_Resources));
 
-        BifResource res;
-        res.m_ResId = rawRes.m_Id;
-        res.m_ResType = rawRes.m_ResourceType;
+        std::unique_ptr<BifResource> res;
 
         std::size_t offsetToData = rawRes.m_Offset - offsetToDataBlock;
         ASSERT(offsetToData + rawRes.m_FileSize <= rawBif.m_DataBlock.size());
 
-        res.m_Data.resize(rawRes.m_FileSize);
-        std::memcpy(res.m_Data.data(), rawBif.m_DataBlock.data() + offsetToData, rawRes.m_FileSize);
+        if (m_RawBif.has_value())
+        {
+            std::unique_ptr<BifStreamedResource> streamedRes = std::make_unique<BifStreamedResource>();
+            streamedRes->m_Data = rawBif.m_DataBlock.data() + offsetToData;
+            streamedRes->m_DataLength = rawRes.m_FileSize;
+            res = std::move(streamedRes);
+        }
+        else
+        {
+            std::unique_ptr<BifFrontLoadedResource> frontLoadedRes = std::make_unique<BifFrontLoadedResource>();
+            frontLoadedRes->m_Data.resize(rawRes.m_FileSize);
+            std::memcpy(frontLoadedRes->m_Data.data(), rawBif.m_DataBlock.data() + offsetToData, rawRes.m_FileSize);
+            res = std::move(frontLoadedRes);
+        }
+
+        res->m_ResId = rawRes.m_Id;
+        res->m_ResType = rawRes.m_ResourceType;
 
         // The spec outlines this the m_ReferencedBifResId as (x << 20) + y, where y is the index, and x = y normally and 0
         // for patch BIFs. However, none of the BIFs present in 1.69 or 1.74 seem to follow this rule - x always equals y.

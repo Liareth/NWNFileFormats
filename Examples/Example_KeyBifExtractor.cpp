@@ -158,7 +158,7 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
                 continue;
             }
 
-            std::fwrite(resInBif->second.m_Data.data(), resInBif->second.m_Data.size(), 1, resFile);
+            std::fwrite(resInBif->second->GetData(), resInBif->second->GetDataLength(), 1, resFile);
             std::fclose(resFile);
 
             ++extractedResources;
