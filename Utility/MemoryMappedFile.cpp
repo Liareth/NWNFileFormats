@@ -16,17 +16,23 @@ struct MemoryMappedFile::PlatformImpl
 #if OS_WINDOWS
     HANDLE m_File;
     HANDLE m_MemoryMap;
-    PlatformImpl() : m_File(INVALID_HANDLE_VALUE), m_MemoryMap(INVALID_HANDLE_VALUE) { }
+    LPVOID m_Ptr;
+    PlatformImpl() : m_File(INVALID_HANDLE_VALUE), m_MemoryMap(INVALID_HANDLE_VALUE), m_Ptr(NULL) { }
     ~PlatformImpl()
     {
-        if (m_File != INVALID_HANDLE_VALUE)
+        if (m_Ptr != NULL)
         {
-            CloseHandle(m_File);
+            UnmapViewOfFile(m_Ptr);
         }
 
         if (m_MemoryMap != INVALID_HANDLE_VALUE)
         {
             CloseHandle(m_MemoryMap);
+        }
+
+        if (m_File != INVALID_HANDLE_VALUE)
+        {
+            CloseHandle(m_File);
         }
     }
 #else
@@ -70,13 +76,13 @@ bool MemoryMappedFile::MemoryMap(char const* path, MemoryMappedFile* out)
         return false;
     }
 
-    LPVOID ptr = MapViewOfFile(out->m_PlatformImpl->m_MemoryMap, FILE_MAP_READ, 0, 0, 0);
-    if (!ptr)
+    out->m_PlatformImpl->m_Ptr = MapViewOfFile(out->m_PlatformImpl->m_MemoryMap, FILE_MAP_READ, 0, 0, 0);
+    if (!out->m_PlatformImpl->m_Ptr)
     {
         return false;
     }
 
-    out->m_DataBlock.m_Data = static_cast<std::byte*>(ptr);
+    out->m_DataBlock.m_Data = static_cast<std::byte*>(out->m_PlatformImpl->m_Ptr);
     out->m_DataBlock.m_DataLength = GetFileSize(out->m_PlatformImpl->m_File, NULL);
 #else
     out->m_PlatformImpl->m_FileDescriptor = open(path, O_RDONLY);
