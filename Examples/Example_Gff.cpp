@@ -1,6 +1,8 @@
 #include "FileFormats/Gff.hpp"
 #include "Utility/Assert.hpp"
 
+#include <cinttypes>
+
 namespace {
 
 bool ReadAllBytes(const char* path, std::vector<std::byte>* out)
@@ -190,13 +192,13 @@ void GffExamplePrintGff_r(GffStruct const& element, int depth)
         {
             Type_DWORD64 value;
             element.ReadField(kvp, &value);
-            std::printf("\n%*c%s: [DWORD64] %lu", depth, ' ', kvp.first.c_str(), value);
+            std::printf("\n%*c%s: [DWORD64] %" PRIu64, depth, ' ', kvp.first.c_str(), value);
         }
         else if (kvp.second.first == Raw::GffField::Type::INT64)
         {
             Type_INT64 value;
             element.ReadField(kvp, &value);
-            std::printf("\n%*c%s: [INT64] %ld", depth, ' ', kvp.first.c_str(), value);
+            std::printf("\n%*c%s: [INT64] %" PRId64, depth, ' ', kvp.first.c_str(), value);
         }
         else if (kvp.second.first == Raw::GffField::Type::FLOAT)
         {
