@@ -1,8 +1,13 @@
 #include "MemoryMappedFile.hpp"
+#include "Utility/Assert.hpp"
 
 #if OS_WINDOWS
     #include "Windows.h"
 #else
+    #include <fcntl.h>
+    #include <sys/mman.h>
+    #include <sys/stat.h>
+    #include <unistd.h>
 #endif
 
 // An RAII wrapper around the naked resources exposed by the platform.
@@ -25,6 +30,22 @@ struct MemoryMappedFile::PlatformImpl
         }
     }
 #else
+    int m_FileDescriptor;
+    void* m_Ptr;
+    std::size_t m_PtrLength;
+    PlatformImpl() : m_FileDescriptor(-1), m_Ptr(nullptr) { }
+    ~PlatformImpl()
+    {
+        if (m_Ptr)
+        {
+            munmap(m_Ptr, m_PtrLength);
+        }
+
+        if (m_FileDescriptor != -1)
+        {
+            close(m_FileDescriptor);
+        }
+    }
 #endif
 };
 
@@ -58,7 +79,30 @@ bool MemoryMappedFile::MemoryMap(char const* path, MemoryMappedFile* out)
     out->m_DataBlock.m_Data = static_cast<std::byte*>(ptr);
     out->m_DataBlock.m_DataLength = GetFileSize(out->m_PlatformImpl->m_File, NULL);
 #else
-    ASSERT_FAIL();
+    out->m_PlatformImpl->m_FileDescriptor = open(path, O_RDONLY);
+    if (out->m_PlatformImpl->m_FileDescriptor == -1)
+    {
+        return false;
+    }
+
+    struct stat statBuffer;
+    if (stat(path, &statBuffer) == -1)
+    {
+        return false;
+    }
+
+    out->m_PlatformImpl->m_PtrLength = statBuffer.st_size;
+
+    out->m_PlatformImpl->m_Ptr = mmap(nullptr, out->m_PlatformImpl->m_PtrLength, PROT_READ, MAP_PRIVATE,
+        out->m_PlatformImpl->m_FileDescriptor, 0);
+
+    if (out->m_PlatformImpl->m_Ptr == MAP_FAILED)
+    {
+        return false;
+    }
+
+    out->m_DataBlock.m_Data = static_cast<std::byte*>(out->m_PlatformImpl->m_Ptr);
+    out->m_DataBlock.m_DataLength = out->m_PlatformImpl->m_PtrLength;
 #endif
 
     return true;
