@@ -20,7 +20,6 @@ bool Gff::ReadFromByteVector(std::vector<std::byte>&& bytes, Gff* out)
     return out->ConstructInternal(bytes.data());
 }
 
-// Constructs an Gff from a file.
 bool Gff::ReadFromFile(char const* path, Gff* out)
 {
     ASSERT(path);
