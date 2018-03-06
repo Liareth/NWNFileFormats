@@ -1,9 +1,12 @@
 #pragma once
 
 #include "FileFormats/Resource.hpp"
+#include "Utility/DataBlock.hpp"
+#include "Utility/VirtualObject.hpp"
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -99,7 +102,7 @@ struct ErfResource
     std::uint32_t m_ResourceSize; // number of bytes
 };
 
-using ErfResourceData = std::byte;
+using ErfResourceData = DataBlock;
 
 struct Erf
 {
@@ -107,11 +110,26 @@ struct Erf
     std::vector<ErfLocalisedString> m_LocalisedStrings;
     std::vector<ErfKey> m_Keys;
     std::vector<ErfResource> m_Resources;
-    std::vector<ErfResourceData> m_ResourceData;
+    std::unique_ptr<ErfResourceData> m_ResourceData;
 
+    // Constructs an Erf from a non-owning pointer. Memory usage may be high.
     static bool ReadFromBytes(std::byte const* bytes, std::size_t bytesCount, Erf* out);
 
+    // Constructs an Erf from a vector of bytes which we have taken ownership of. Memory usage will be moderate.
+    static bool ReadFromByteVector(std::vector<std::byte>&& bytes, Erf* out);
+
+    // Constructs an Erf from a file. The file with be memory mapped so memory usage will be ideal.
+    static bool ReadFromFile(char const* path, Erf* out);
+
 private:
+
+    // This is an RAII wrapper around the various methods of loading a BIF that we have.
+    // - If by bytes, this is nullptr.
+    // - If by byte vector, this will contain the vector.
+    // - If by file, this will contain a handle to the file (since we're memory mapping).
+    std::unique_ptr<VirtualObject> m_DataBlockStorage;
+
+    bool ConstructInternal(std::byte const* bytes);
     void ReadLocalisedStrings(std::byte const* data);
     void ReadKeys(std::byte const* data);
     void ReadResources(std::byte const* data);

@@ -6,9 +6,27 @@
 
 namespace FileFormats::Erf::Friendly {
 
-// This is a user friendly wrapper around the Erf data.
-
 Erf::Erf(Raw::Erf const& rawErf)
+{
+    ConstructInternal(rawErf);
+}
+
+Erf::Erf(Raw::Erf&& rawErf) : m_RawErf(std::forward<Raw::Erf>(rawErf))
+{
+    ConstructInternal(m_RawErf.value());
+}
+
+std::vector<Raw::ErfLocalisedString> const& Erf::GetDescriptions() const
+{
+    return m_Descriptions;
+}
+
+std::vector<ErfResource> const& Erf::GetResources() const
+{
+    return m_Resources;
+}
+
+void Erf::ConstructInternal(Raw::Erf const& rawErf)
 {
     // First - copy in the descriptions. This one is simple.
     m_Descriptions = rawErf.m_LocalisedStrings;
@@ -39,26 +57,26 @@ Erf::Erf(Raw::Erf const& rawErf)
 
         // This gives us the offset to the start of the resource data block.
         std::uint32_t offsetToEndOfResources = rawErf.m_Header.m_OffsetToResourceList + (sizeof(Raw::ErfResource) * rawErf.m_Header.m_EntryCount); // End of resources block
-
-        // This gives us an offset into the vector of raw data.
         std::size_t offsetIntoResourceData = rawRes.m_OffsetToResource - offsetToEndOfResources;
-        ASSERT(offsetIntoResourceData < rawErf.m_ResourceData.size());
+        ASSERT(offsetIntoResourceData < rawErf.m_ResourceData->GetDataLength());
 
-        resource.m_Data.resize(rawRes.m_ResourceSize);
-        std::memcpy(resource.m_Data.data(), rawErf.m_ResourceData.data() + offsetIntoResourceData, rawRes.m_ResourceSize);
+        if (m_RawErf.has_value())
+        {
+            std::unique_ptr<NonOwningDataBlock> db = std::make_unique<NonOwningDataBlock>();
+            db->m_Data = rawErf.m_ResourceData->GetData();
+            db->m_DataLength = rawRes.m_ResourceSize;
+            resource.m_DataBlock = std::move(db);
+        }
+        else
+        {
+            std::unique_ptr<OwningDataBlock> db = std::make_unique<OwningDataBlock>();
+            db->m_Data.resize(rawRes.m_ResourceSize);
+            std::memcpy(db->m_Data.data(), rawErf.m_ResourceData->GetData() + offsetIntoResourceData, rawRes.m_ResourceSize);
+            resource.m_DataBlock = std::move(db);
+        }
 
         m_Resources.emplace_back(std::move(resource));
     }
-}
-
-std::vector<Raw::ErfLocalisedString> const& Erf::GetDescriptions() const
-{
-    return m_Descriptions;
-}
-
-std::vector<ErfResource> const& Erf::GetResources() const
-{
-    return m_Resources;
 }
 
 }

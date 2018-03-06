@@ -6,8 +6,6 @@
 #include <optional>
 #include <unordered_map>
 
-struct DataBlock;
-
 namespace FileFormats::Bif::Friendly {
 
 struct BifResource
