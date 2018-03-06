@@ -1,29 +1,8 @@
 #include "FileFormats/Key/Key_Raw.hpp"
 #include "Utility/Assert.hpp"
+#include "Utility/MemoryMappedFile.hpp"
 
 #include <cstring>
-
-namespace FileFormats::Key::Raw {
-
-bool Key::ReadFromBytes(std::byte const* bytes, Key* out)
-{
-    ASSERT(bytes);
-    ASSERT(out);
-
-    std::memcpy(&out->m_Header, bytes, sizeof(out->m_Header));
-
-    if (std::memcmp(out->m_Header.m_FileType, "KEY ", 4) != 0 ||
-        std::memcmp(out->m_Header.m_FileVersion, "V1  ", 4) != 0)
-    {
-        return false;
-    }
-
-    out->ReadFiles(bytes);
-    out->ReadFilenames(bytes);
-    out->ReadEntries(bytes);
-
-    return true;
-}
 
 namespace {
 
@@ -34,6 +13,57 @@ void ReadGenericOffsetable(std::byte const* bytesWithInitialOffset, std::size_t 
     std::memcpy(out.data(), bytesWithInitialOffset, count * sizeof(T));
 }
 
+}
+
+namespace FileFormats::Key::Raw {
+
+bool Key::ReadFromBytes(std::byte const* bytes, Key* out)
+{
+    ASSERT(bytes);
+    ASSERT(out);
+    return out->ConstructInternal(bytes);
+}
+
+bool Key::ReadFromByteVector(std::vector<std::byte>&& bytes, Key* out)
+{
+    ASSERT(!bytes.empty());
+    ASSERT(out);
+    return out->ConstructInternal(bytes.data());
+}
+
+bool Key::ReadFromFile(char const* path, Key* out)
+{
+    ASSERT(path);
+    ASSERT(out);
+
+    MemoryMappedFile memmap;
+    bool loaded = MemoryMappedFile::MemoryMap(path, &memmap);
+
+    if (!loaded)
+    {
+        return false;
+    }
+
+    return out->ConstructInternal(memmap.GetDataBlock().GetData());
+}
+
+bool Key::ConstructInternal(std::byte const* bytes)
+{
+    ASSERT(bytes);
+
+    std::memcpy(&m_Header, bytes, sizeof(m_Header));
+
+    if (std::memcmp(m_Header.m_FileType, "KEY ", 4) != 0 ||
+        std::memcmp(m_Header.m_FileVersion, "V1  ", 4) != 0)
+    {
+        return false;
+    }
+
+    ReadFiles(bytes);
+    ReadFilenames(bytes);
+    ReadEntries(bytes);
+
+    return true;
 }
 
 void Key::ReadFiles(std::byte const* data)

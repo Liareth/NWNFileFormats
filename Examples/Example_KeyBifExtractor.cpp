@@ -12,28 +12,6 @@
 
 namespace {
 
-bool ReadAllBytes(const char* path, std::vector<std::byte>* out)
-{
-    FILE* file = std::fopen(path, "rb");
-
-    if (file)
-    {
-        std::fseek(file, 0, SEEK_END);
-        std::size_t fileLen = ftell(file);
-        std::fseek(file, 0, SEEK_SET);
-
-        std::size_t outSize = out->size();
-        out->resize(outSize + fileLen);
-        std::size_t read = std::fread(out->data() + outSize, 1, fileLen, file);
-        ASSERT(read == fileLen);
-
-        std::fclose(file);
-        return true;
-    }
-
-    return false;
-}
-
 // Recursively make the provided directory.
 void RecursivelyEnsureDir(std::string const& dir)
 {
@@ -55,15 +33,6 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath);
 
 int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
 {
-    std::vector<std::byte> keyData;
-    bool file = ReadAllBytes(keyPath, &keyData);
-
-    if (!file)
-    {
-        std::printf("Failed to open key file %s.\n", keyPath);
-        return 1;
-    }
-
     using namespace FileFormats;
 
     // We need to iterate over each BIF in turn, over all resources, which will allow us to extract the data to the correct file name.
@@ -76,7 +45,7 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
 
     {
         Key::Raw::Key rawKey;
-        bool loaded = Key::Raw::Key::ReadFromBytes(keyData.data(), &rawKey);
+        bool loaded = Key::Raw::Key::ReadFromFile(keyPath, &rawKey);
 
         if (!loaded)
         {
@@ -84,7 +53,7 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
             return 1;
         }
 
-        Key::Friendly::Key key(rawKey);
+        Key::Friendly::Key key(std::move(rawKey));
 
         for (Key::Friendly::KeyBifReferencedResource const& res : key.GetReferencedResources())
         {

@@ -3,45 +3,14 @@
 
 namespace {
 
-bool ReadAllBytes(const char* path, std::vector<std::byte>* out)
-{
-    FILE* file = std::fopen(path, "rb");
-
-    if (file)
-    {
-        std::fseek(file, 0, SEEK_END);
-        std::size_t fileLen = ftell(file);
-        std::fseek(file, 0, SEEK_SET);
-
-        std::size_t outSize = out->size();
-        out->resize(outSize + fileLen);
-        std::size_t read = std::fread(out->data() + outSize, 1, fileLen, file);
-        ASSERT(read == fileLen);
-
-        std::fclose(file);
-        return true;
-    }
-
-    return false;
-}
-
 int KeyExample(char* path);
 
 int KeyExample(char* path)
 {
-    std::vector<std::byte> keyData;
-    bool file = ReadAllBytes(path, &keyData);
-
-    if (!file)
-    {
-        std::printf("Failed to open file %s.\n", path);
-        return 1;
-    }
-
     using namespace FileFormats::Key;
 
     Raw::Key rawKey;
-    bool loaded = Raw::Key::ReadFromBytes(keyData.data(), &rawKey);
+    bool loaded = Raw::Key::ReadFromFile(path, &rawKey);
 
     std::printf("Key FileType: %.4s\n", rawKey.m_Header.m_FileType);
     std::printf("Key FileVersion: %.4s\n", rawKey.m_Header.m_FileVersion);
@@ -54,7 +23,7 @@ int KeyExample(char* path)
         return 1;
     }
 
-    Friendly::Key key(rawKey);
+    Friendly::Key key(std::move(rawKey));
 
     std::printf("\nReferences BIFs:\n");
 
@@ -70,7 +39,8 @@ int KeyExample(char* path)
         ASSERT(res.m_ReferencedBifIndex < key.GetReferencedBifs().size());
         const char* resType = FileFormats::Resource::StringFromResourceType(res.m_ResType);
         std::string const& bifPath = key.GetReferencedBifs()[res.m_ReferencedBifIndex].m_Path;
-        std::printf("\n %s.%s %s [%u] ", res.m_ResRef.c_str(), resType, bifPath.c_str(), res.m_ResId);
+        std::printf("\n %s.%s %s [%zu (%u) | %u] ", res.m_ResRef.c_str(), resType, bifPath.c_str(),
+            res.m_ReferencedBifIndex, res.m_ReferencedBifResId, res.m_ResId);
     }
 
     return 0;

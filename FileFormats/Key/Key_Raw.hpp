@@ -93,9 +93,17 @@ struct Key
     std::vector<KeyFilename> m_Filenames;
     std::vector<KeyEntry> m_Entries;
 
+    // Constructs an Key from a non-owning pointer.
     static bool ReadFromBytes(std::byte const* bytes, Key* out);
 
+    // Constructs an Key from a vector of bytes which we have taken ownership of.
+    static bool ReadFromByteVector(std::vector<std::byte>&& bytes, Key* out);
+
+    // Constructs an Key from a file.
+    static bool ReadFromFile(char const* path, Key* out);
+
 private:
+    bool ConstructInternal(std::byte const* bytes);
     void ReadFiles(std::byte const* data);
     void ReadFilenames(std::byte const* data);
     void ReadEntries(std::byte const* data);
