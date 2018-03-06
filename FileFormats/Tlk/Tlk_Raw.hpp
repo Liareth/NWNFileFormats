@@ -1,7 +1,5 @@
 #pragma once
 
-#include "FileFormats/Resource.hpp"
-
 #include <cstddef>
 #include <vector>
 
