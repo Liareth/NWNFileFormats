@@ -21,6 +21,19 @@ int TlkExample(char* path)
         return 1;
     }
 
+    Friendly::Tlk tlk(std::move(rawTlk));
+
+    // Grab some strings via direct strref. If it doesn't exist, it returns emptry string.
+    std::printf("\n0x00000000: '%s'", tlk[0x00000000].c_str());
+    std::printf("\n0x00000010: '%s'", tlk[0x00000010].c_str());
+    std::printf("\n0xFFFFFFFF: '%s'", tlk[0xFFFFFFFF].c_str());
+
+    // Print the entire tlk table.
+    for (auto const& entry : tlk)
+    {
+        std::printf("\n%u -> '%s'", entry.first, entry.second.c_str());
+    }
+
     return 0;
 }
 

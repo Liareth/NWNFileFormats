@@ -18,6 +18,7 @@ add_library(FileFormats STATIC
 
     Tlk.hpp
     Tlk/Tlk_Raw.cpp Tlk/Tlk_Raw.hpp
+    Tlk/Tlk_Friendly.cpp Tlk/Tlk_Friendly.hpp
 
     Resource.cpp Resource.hpp
 )
