@@ -2,10 +2,10 @@
 
 #include "FileFormats/Resource.hpp"
 #include "Utility/DataBlock.hpp"
+#include "Utility/VirtualObject.hpp"
 
 #include <cstddef>
 #include <cstdint>
-#include <optional>
 #include <memory>
 #include <vector>
 
@@ -120,9 +120,7 @@ private:
     // - If by bytes, this is nullptr.
     // - If by byte vector, this will contain the vector.
     // - If by file, this will contain a handle to the file (since we're memory mapping).
-    struct BifDataBlockStorage { virtual ~BifDataBlockStorage() {} };
-    template <typename T> struct BifDataBlockStorageRAII;
-    std::unique_ptr<BifDataBlockStorage> m_DataBlockStorage;
+    std::unique_ptr<VirtualObject> m_DataBlockStorage;
 
     bool ConstructInternal(std::byte const* bytes);
     void ReadVariableResourceTable(std::byte const* data);

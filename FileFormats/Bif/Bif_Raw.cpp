@@ -1,6 +1,7 @@
 #include "FileFormats/Bif/Bif_Raw.hpp"
 #include "Utility/Assert.hpp"
 #include "Utility/MemoryMappedFile.hpp"
+#include "Utility/RAIIWrapper.hpp"
 
 #include <cstring>
 
@@ -17,17 +18,11 @@ void ReadGenericOffsetable(std::byte const* bytesWithInitialOffset, std::size_t 
 
 }
 
-template <typename T>
-struct Bif::BifDataBlockStorageRAII : public BifDataBlockStorage
-{
-    T m_Data;
-    BifDataBlockStorageRAII(T&& data) : m_Data(std::forward<T>(data)) { }
-    virtual ~BifDataBlockStorageRAII() { }
-};
-
 bool Bif::ReadFromBytes(std::byte const* bytes, std::size_t bytesCount, Bif* out)
 {
+    ASSERT(bytes);
     ASSERT(bytesCount);
+    ASSERT(out);
 
     if (!out->ConstructInternal(bytes))
     {
@@ -47,6 +42,9 @@ bool Bif::ReadFromBytes(std::byte const* bytes, std::size_t bytesCount, Bif* out
 
 bool Bif::ReadFromByteVector(std::vector<std::byte>&& bytes, Bif* out)
 {
+    ASSERT(!bytes.empty());
+    ASSERT(out);
+
     if (!out->ConstructInternal(bytes.data()))
     {
         return false;
@@ -62,13 +60,16 @@ bool Bif::ReadFromByteVector(std::vector<std::byte>&& bytes, Bif* out)
     out->m_DataBlock = std::move(nonOwningBlock);
 
     using StorageType = std::vector<std::byte>;
-    out->m_DataBlockStorage = std::make_unique<BifDataBlockStorageRAII<StorageType>>(std::forward<StorageType>(bytes));
+    out->m_DataBlockStorage = std::make_unique<RAIIWrapper<StorageType>>(std::forward<StorageType>(bytes));
 
     return true;
 }
 
 bool Bif::ReadFromFile(char const* path, Bif* out)
 {
+    ASSERT(path);
+    ASSERT(out);
+
     MemoryMappedFile memmap;
     bool loaded = MemoryMappedFile::MemoryMap(path, &memmap);
 
@@ -93,7 +94,7 @@ bool Bif::ReadFromFile(char const* path, Bif* out)
     nonOwningBlock->m_DataLength = memmapped.GetDataLength() - offset;
     out->m_DataBlock = std::move(nonOwningBlock);
 
-    out->m_DataBlockStorage = std::make_unique<BifDataBlockStorageRAII<MemoryMappedFile>>(std::move(memmap));
+    out->m_DataBlockStorage = std::make_unique<RAIIWrapper<MemoryMappedFile>>(std::move(memmap));
 
     return true;
 }
