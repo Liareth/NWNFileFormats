@@ -1,5 +1,6 @@
 #include "FileFormats/Gff/Gff_Raw.hpp"
 #include "Utility/Assert.hpp"
+#include "Utility/MemoryMappedFile.hpp"
 
 #include <cstring>
 
@@ -9,22 +10,31 @@ bool Gff::ReadFromBytes(std::byte const* bytes, Gff* out)
 {
     ASSERT(bytes);
     ASSERT(out);
+    return out->ConstructInternal(bytes);
+}
 
-    std::memcpy(&out->m_Header, bytes, sizeof(out->m_Header));
+bool Gff::ReadFromByteVector(std::vector<std::byte>&& bytes, Gff* out)
+{
+    ASSERT(!bytes.empty());
+    ASSERT(out);
+    return out->ConstructInternal(bytes.data());
+}
 
-    if (std::memcmp(out->m_Header.m_FileVersion, "V3.2", 4) != 0)
+// Constructs an Gff from a file.
+bool Gff::ReadFromFile(char const* path, Gff* out)
+{
+    ASSERT(path);
+    ASSERT(out);
+
+    MemoryMappedFile memmap;
+    bool loaded = MemoryMappedFile::MemoryMap(path, &memmap);
+
+    if (!loaded)
     {
         return false;
     }
 
-    out->ReadStructs(bytes);
-    out->ReadFields(bytes);
-    out->ReadLabels(bytes);
-    out->ReadFieldData(bytes);
-    out->ReadFieldIndices(bytes);
-    out->ReadLists(bytes);
-
-    return true;
+    return out->ConstructInternal(memmap.GetDataBlock().GetData());
 }
 
 namespace {
@@ -224,6 +234,25 @@ GffField::Type_List Gff::ConstructList(GffField const& field) const
     std::memcpy(list.m_Elements.data(), m_ListIndices.data() + offsetIntoListIndicesArray + sizeof(length), length * sizeof(std::uint32_t));
 
     return list;
+}
+
+bool Gff::ConstructInternal(std::byte const* bytes)
+{
+    std::memcpy(&m_Header, bytes, sizeof(m_Header));
+
+    if (std::memcmp(m_Header.m_FileVersion, "V3.2", 4) != 0)
+    {
+        return false;
+    }
+
+    ReadStructs(bytes);
+    ReadFields(bytes);
+    ReadLabels(bytes);
+    ReadFieldData(bytes);
+    ReadFieldIndices(bytes);
+    ReadLists(bytes);
+
+    return true;
 }
 
 namespace {

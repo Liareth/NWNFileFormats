@@ -5,49 +5,18 @@
 
 namespace {
 
-bool ReadAllBytes(const char* path, std::vector<std::byte>* out)
-{
-    FILE* file = std::fopen(path, "rb");
-
-    if (file)
-    {
-        std::fseek(file, 0, SEEK_END);
-        std::size_t fileLen = ftell(file);
-        std::fseek(file, 0, SEEK_SET);
-
-        std::size_t outSize = out->size();
-        out->resize(outSize + fileLen);
-        std::size_t read = std::fread(out->data() + outSize, 1, fileLen, file);
-        ASSERT(read == fileLen);
-
-        std::fclose(file);
-        return true;
-    }
-
-    return false;
-}
+using namespace FileFormats::Gff;
 
 int GffExample(char* path);
-void GffExamplePrintVarsAndTag(FileFormats::Gff::Friendly::Gff const& gff);
-void GffExamplePrintGff_r(FileFormats::Gff::Friendly::GffStruct const& element, int depth = 0);
+void GffExamplePrintVarsAndTag(Friendly::Gff const& gff);
+void GffExamplePrintGff_r(Friendly::GffStruct const& element, int depth = 0);
 
 int GffExample(char* path)
 {
-    std::vector<std::byte> gffData;
-    bool file = ReadAllBytes(path, &gffData);
-
-    if (!file)
-    {
-        std::printf("Failed to open file %s.\n", path);
-        return 1;
-    }
-
-    FileFormats::Gff::Raw::Gff rawGff;
-
-    // Construct a raw Gff file from the loaded bytes.
     // This isn't something that a normal user would want to traverse - this is something that
     // advanced users may wish to play with, however.
-    bool loaded = FileFormats::Gff::Raw::Gff::ReadFromBytes(gffData.data(), &rawGff);
+    Raw::Gff rawGff;
+    bool loaded = Raw::Gff::ReadFromFile(path, &rawGff);
 
     std::printf("GFF FileType: %.4s\n", rawGff.m_Header.m_FileType);
     std::printf("GFF FileVersion: %.4s\n", rawGff.m_Header.m_FileVersion);
@@ -61,7 +30,7 @@ int GffExample(char* path)
     // Construct a friendly Gff file from the raw file we loaded earlier.
     // This provides a much more user friendly interface around the Gff and does not expose
     // implementation details nor require an advanced understanding of the format to use.
-    FileFormats::Gff::Friendly::Gff gff(rawGff);
+    Friendly::Gff gff(std::move(rawGff));
 
     std::printf("\nPrinting tags and variables.\n");
     GffExamplePrintVarsAndTag(gff);
@@ -72,7 +41,6 @@ int GffExample(char* path)
     return 0;
 }
 
-using namespace FileFormats::Gff;
 using namespace FileFormats::Gff::Friendly;
 
 void GffExamplePrintVarsAndTag(Gff const& gff)

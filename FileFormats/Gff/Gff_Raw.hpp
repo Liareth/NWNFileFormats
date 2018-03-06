@@ -322,7 +322,14 @@ struct Gff
     std::vector<GffFieldIndex> m_FieldIndices;
     std::vector<GffListIndex> m_ListIndices;
 
+    // Constructs an Gff from a non-owning pointer.
     static bool ReadFromBytes(std::byte const* bytes, Gff* out);
+
+    // Constructs an Gff from a vector of bytes which we have taken ownership of.
+    static bool ReadFromByteVector(std::vector<std::byte>&& bytes, Gff* out);
+
+    // Constructs an Gff from a file.
+    static bool ReadFromFile(char const* path, Gff* out);
 
     // Below are functions to construct a type from the provided field.
     GffField::Type_BYTE ConstructBYTE(GffField const& field) const;
@@ -343,6 +350,7 @@ struct Gff
     GffField::Type_List ConstructList(GffField const& field) const;
 
 private:
+    bool ConstructInternal(std::byte const* bytes);
     void ReadStructs(std::byte const* data);
     void ReadFields(std::byte const* data);
     void ReadLabels(std::byte const* data);
