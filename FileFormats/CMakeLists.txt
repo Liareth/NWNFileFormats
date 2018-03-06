@@ -16,6 +16,9 @@ add_library(FileFormats STATIC
     Key/Key_Raw.cpp Key/Key_Raw.hpp
     Key/Key_Friendly.cpp Key/Key_Friendly.hpp
 
+    Tlk.hpp
+    Tlk/Tlk_Raw.cpp Tlk/Tlk_Raw.hpp
+
     Resource.cpp Resource.hpp
 )
 

@@ -12,3 +12,6 @@ target_link_libraries(Example_Key FileFormats)
 
 add_executable(Example_KeyBifExtractor Example_KeyBifExtractor.cpp)
 target_link_libraries(Example_KeyBifExtractor FileFormats)
+
+add_executable(Example_Tlk Example_Tlk.cpp)
+target_link_libraries(Example_Tlk FileFormats)
