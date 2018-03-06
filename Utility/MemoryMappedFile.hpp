@@ -5,6 +5,8 @@
 #include <cstddef>
 #include <memory>
 
+class MemoryMappedFile_impl;
+
 // This class wraps memory-mapped read only access to a file.
 // This will map the entire range of the file (0 -> fileSize) into a memory rage represented by GetDataBlock().
 // This can later be expanded to support spans within the file and writing too.
@@ -20,7 +22,5 @@ public:
 
 private:
     NonOwningDataBlock m_DataBlock;
-
-    struct PlatformImpl;
-    std::unique_ptr<PlatformImpl> m_PlatformImpl;
+    std::unique_ptr<MemoryMappedFile_impl> m_PlatformImpl;
 };
