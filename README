@@ -1,6 +1,6 @@
 This is a cross-platform library written in C++ which allows developers to read many of the critical file types used by Neverwinter Nights 1.69 / 1.74. It compiles and runs on Windows and Linux on x86 processors. There will probably be issues on ARM processors.
 
-Requirements: A complaint C++17 compiler is required. For Windows, this is Visual Studio Preview 1 or newer. I use GCC 7.2 on Linux but an older version may or may not work.
+Requirements: A compliant C++17 compiler is required. For Windows, this is Visual Studio Preview 1 or newer. I use GCC 7.2 on Linux but an older version may or may not work.
 
 Check the examples folder to see how the library is used.
 
