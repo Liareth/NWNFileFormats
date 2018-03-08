@@ -1,3 +1,6 @@
+add_executable(Example_2da Example_2da.cpp)
+target_link_libraries(Example_2da FileFormats)
+
 add_executable(Example_Bif Example_Bif.cpp)
 target_link_libraries(Example_Bif FileFormats)
 
