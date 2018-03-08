@@ -22,6 +22,7 @@ add_library(FileFormats STATIC
 
     2da.hpp
     2da/2da_Raw.cpp 2da/2da_Raw.hpp
+    2da/2da_Friendly.cpp 2da/2da_Friendly.hpp
 
     Resource.cpp Resource.hpp
 )
