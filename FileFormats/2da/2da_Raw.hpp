@@ -136,7 +136,7 @@ struct TwoDA
     static bool ReadFromFile(char const* path, TwoDA* out);
 
 private:
-	bool ConstructInternal(std::byte const* bytes, std::size_t bytesCount);
+    bool ConstructInternal(std::byte const* bytes, std::size_t bytesCount);
 };
 
 }
