@@ -1,5 +1,3 @@
-#pragma once
-
 #include "FileFormats/2da/2da_Friendly.hpp"
 #include "Utility/Assert.hpp"
 
@@ -7,8 +5,8 @@ namespace FileFormats::TwoDA::Friendly {
 
 TwoDARow::TwoDARow(std::vector<TwoDAEntry>&& data,
     std::unordered_map<std::string, std::size_t> const& columns)
-    : m_Data(std::forward<std::vector<TwoDAEntry>>(data)),
-      m_ColumnNames(columns)
+    : m_ColumnNames(columns),
+      m_Data(std::forward<std::vector<TwoDAEntry>>(data))
 {
 }
 

@@ -1,8 +1,8 @@
-#pragma once
-
 #include "FileFormats/2da/2da_Raw.hpp"
 #include "Utility/Assert.hpp"
 #include "Utility/MemoryMappedFile.hpp"
+
+#include <cstring>
 
 namespace FileFormats::TwoDA::Raw {
 
