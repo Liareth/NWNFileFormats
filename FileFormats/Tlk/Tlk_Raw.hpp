@@ -80,6 +80,9 @@ struct Tlk
     // Constructs an Tlk from a file.
     static bool ReadFromFile(char const* path, Tlk* out);
 
+    // Writes the raw Tlk to disk.
+    bool WriteToFile(char const* path);
+
 private:
     bool ConstructInternal(std::byte const* bytes, std::size_t bytesCount);
     void ReadStringData(std::byte const* data);

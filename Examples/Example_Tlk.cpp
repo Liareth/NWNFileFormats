@@ -31,8 +31,14 @@ int TlkExample(char* path)
     // Print the entire tlk table.
     for (auto const& entry : tlk)
     {
-        std::printf("\n%u -> '%s'", entry.first, entry.second.c_str());
+        std::printf("\n%u -> '%s'", entry.first, entry.second.m_String.value_or("****").c_str());
     }
+
+    // Then save the tlk back out next to the original.
+    char pathBuffer[1024];
+    std::sprintf(pathBuffer, "%s.1", path);
+    bool written = tlk.WriteToPath(pathBuffer);
+    ASSERT(written);
 
     return 0;
 }

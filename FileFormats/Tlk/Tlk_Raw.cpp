@@ -42,9 +42,27 @@ bool Tlk::ReadFromFile(char const* path, Tlk* out)
     if (!loaded)
     {
         return false;
-    }
+    } 
 
     return out->ConstructInternal(memmap.GetDataBlock().GetData(), memmap.GetDataBlock().GetDataLength());
+}
+
+bool Tlk::WriteToFile(char const* path)
+{
+    ASSERT(path);
+
+    FILE* outFile = std::fopen(path, "wb");
+
+    if (outFile)
+    {
+        std::fwrite(&m_Header, sizeof(m_Header), 1, outFile);
+        std::fwrite(m_StringData.data(), sizeof(m_StringData[0]), m_StringData.size(), outFile);
+        std::fwrite(m_StringEntries.data(), sizeof(m_StringEntries[0]), m_StringEntries.size(), outFile);
+        std::fclose(outFile);
+        return true;
+    }
+
+    return false;
 }
 
 bool Tlk::ConstructInternal(std::byte const* bytes, std::size_t bytesCount)
