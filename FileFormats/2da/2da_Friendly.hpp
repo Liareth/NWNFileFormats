@@ -22,7 +22,9 @@ public:
         std::vector<TwoDAEntry>&& data,
         std::unordered_map<std::string, std::size_t> const& columns);
 
-    // Operator[] returns the rows directly.
+    // Operator[] returns the column directly.
+    TwoDAEntry& operator[](std::size_t column);
+    TwoDAEntry& operator[](std::string const& column);
     TwoDAEntry const& operator[](std::size_t column) const;
     TwoDAEntry const& operator[](std::string const& column) const;
 
@@ -36,9 +38,14 @@ public:
     float AsFloat(std::size_t column) const;
     float AsFloat(std::string const& column) const;
 
+    bool IsEmpty(std::size_t column) const;
+    bool IsEmpty(std::string const& column) const;
+
     std::uint32_t RowId() const;
 
     using TwoDAEntries = std::vector<TwoDAEntry>;
+    TwoDAEntries::iterator begin();
+    TwoDAEntries::iterator end();
     TwoDAEntries::const_iterator begin() const;
     TwoDAEntries::const_iterator end() const;
     std::size_t size() const;
@@ -65,16 +72,21 @@ public:
     float AsFloat(std::size_t row, std::string const& column) const;
 
     // Operator[] returns the row directly.
+    TwoDARow& operator[](std::size_t i);
     TwoDARow const& operator[](std::size_t i) const;
 
     // This is just a flat vector of rows.
     using TwoDARows = std::vector<TwoDARow>;
+    TwoDARows::iterator begin();
+    TwoDARows::iterator end();
     TwoDARows::const_iterator begin() const;
     TwoDARows::const_iterator end() const;
     std::size_t size() const;
 
     // The column map is a map, where the index contains the name of the column.
     std::unordered_map<std::string, std::size_t> const& GetColumnNames() const;
+
+    bool WriteToPath(char const* path) const;
 
 private:
     TwoDARows m_Rows;

@@ -12,6 +12,19 @@ TwoDARow::TwoDARow(std::uint32_t rowId,
 {
 }
 
+TwoDAEntry& TwoDARow::operator[](std::size_t column)
+{
+    ASSERT(column < m_Data.size());
+    return m_Data[column];
+}
+
+TwoDAEntry& TwoDARow::operator[](std::string const& column)
+{
+    auto columnName = m_ColumnNames.find(column);
+    ASSERT(columnName != std::end(m_ColumnNames));
+    return m_Data[columnName->second];
+}
+
 TwoDAEntry const& TwoDARow::operator[](std::size_t column) const
 {
     ASSERT(column < m_Data.size());
@@ -55,9 +68,29 @@ float TwoDARow::AsFloat(std::string const& column) const
     return static_cast<float>(atof(operator[](column).m_Data.c_str()));
 }
 
+bool TwoDARow::IsEmpty(std::size_t column) const
+{
+    return operator[](column).m_IsEmpty;
+}
+
+bool TwoDARow::IsEmpty(std::string const& column) const
+{
+    return operator[](column).m_IsEmpty;
+}
+
 std::uint32_t TwoDARow::RowId() const
 {
     return m_RowId;
+}
+
+TwoDARow::TwoDAEntries::iterator TwoDARow::begin()
+{
+    return std::begin(m_Data);
+}
+
+TwoDARow::TwoDAEntries::iterator TwoDARow::end()
+{
+    return std::end(m_Data);
 }
 
 TwoDARow::TwoDAEntries::const_iterator TwoDARow::begin() const
@@ -157,10 +190,26 @@ float TwoDA::AsFloat(std::size_t row, std::string const& column) const
     return m_Rows[row].AsFloat(column);
 }
 
+TwoDARow& TwoDA::operator[](std::size_t i)
+{
+    ASSERT(i < m_Rows.size());
+    return m_Rows[i];
+}
+
 TwoDARow const& TwoDA::operator[](std::size_t i) const
 {
     ASSERT(i < m_Rows.size());
     return m_Rows[i];
+}
+
+TwoDA::TwoDARows::iterator TwoDA::begin()
+{
+    return std::begin(m_Rows);
+}
+
+TwoDA::TwoDARows::iterator TwoDA::end()
+{
+    return std::end(m_Rows);
 }
 
 TwoDA::TwoDARows::const_iterator TwoDA::begin() const
@@ -181,6 +230,56 @@ std::size_t TwoDA::size() const
 std::unordered_map<std::string, std::size_t> const& TwoDA::GetColumnNames() const
 {
     return m_ColumnNames;
+}
+
+bool TwoDA::WriteToPath(char const* path) const
+{
+    Raw::TwoDA rawTwoDA;
+
+    Raw::TwoDALine firstLine;
+    Raw::TwoDALine secondLine;
+    firstLine.m_Tokens.emplace_back("2DA V2.0");
+    rawTwoDA.m_Lines.emplace_back(std::move(firstLine));
+    rawTwoDA.m_Lines.emplace_back(std::move(secondLine));
+
+    std::vector<std::string> columnNames;
+
+    // Convert column names from map to a flat vector.
+    for (auto& kvp : m_ColumnNames)
+    {
+        if (columnNames.size() < kvp.second + 1)
+        {
+            columnNames.resize(kvp.second + 1);
+        }
+        columnNames[kvp.second] = kvp.first;
+    }
+
+    Raw::TwoDALine columns;
+
+    for (const std::string& columnName : columnNames)
+    {
+        columns.m_Tokens.emplace_back(columnName);
+    }
+
+    rawTwoDA.m_Lines.emplace_back(std::move(columns));
+
+    for (int rowId = 0; rowId < m_Rows.size(); ++rowId)
+    {
+        Raw::TwoDALine line;
+        line.m_Tokens.emplace_back(std::to_string(rowId));
+
+        for (const TwoDAEntry& entry : m_Rows[rowId])
+        {
+            if (!entry.m_IsEmpty)
+            {
+                line.m_Tokens.emplace_back(entry.m_Data);
+            }
+        }
+
+        rawTwoDA.m_Lines.emplace_back(std::move(line));
+    }
+
+    return rawTwoDA.WriteToPath(path);
 }
 
 }

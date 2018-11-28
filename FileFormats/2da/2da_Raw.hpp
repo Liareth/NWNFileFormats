@@ -136,6 +136,8 @@ struct TwoDA
     // Constructs a 2da from a file. The file with be memory mapped so memory usage will be ideal.
     static bool ReadFromFile(char const* path, TwoDA* out);
 
+    bool WriteToPath(char const* path) const;
+
 private:
     bool ConstructInternal(std::byte const* bytes, std::size_t bytesCount);
 };

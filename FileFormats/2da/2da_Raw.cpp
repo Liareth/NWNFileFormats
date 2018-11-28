@@ -2,6 +2,8 @@
 #include "Utility/Assert.hpp"
 #include "Utility/MemoryMappedFile.hpp"
 
+#include <algorithm>
+
 #include <cstring>
 
 namespace FileFormats::TwoDA::Raw {
@@ -34,6 +36,98 @@ bool TwoDA::ReadFromFile(char const* path, TwoDA* out)
     }
 
     return out->ConstructInternal(memmap.GetDataBlock().GetData(), memmap.GetDataBlock().GetDataLength());
+}
+
+bool TwoDA::WriteToPath(char const* path) const
+{
+    ASSERT(path);
+
+    FILE* outFile = std::fopen(path, "wb");
+
+    if (outFile)
+    {
+        // First and second lines - write them out manually.
+        const char* twoDaVersion = "2DA V2.0\n\n";
+        std::fwrite(twoDaVersion, std::strlen(twoDaVersion), 1, outFile);
+
+        // For each column now, find the greatest width.
+        std::vector<std::size_t> columnWidths;
+        columnWidths.resize(m_Lines[2].m_Tokens.size() + 1);
+
+        // The column line we handle with a special case, since it's missing row number.
+        for (std::size_t i = 2; i < columnWidths.size(); ++i)
+        {
+            columnWidths[i] = m_Lines[2].m_Tokens[i - 1].size();
+        }
+
+        for (std::size_t i = 3; i < m_Lines.size(); ++i)
+        {
+            for (std::size_t j = 0; j < columnWidths.size(); ++j)
+            {
+                const TwoDALine& line = m_Lines[i];
+                if (j < line.m_Tokens.size())
+                {
+                    const std::string& token = line.m_Tokens[j];
+                    std::size_t tokenSize = token.size();
+                    if (token.find(" ") != std::string::npos)
+                    {
+                        // Account for quotes
+                        tokenSize += 2;
+                    }
+                    columnWidths[j] = std::max(columnWidths[j], tokenSize);
+                }
+            }
+        }
+
+        // Manually print the columns.
+        for (std::size_t i = 0; i < columnWidths.size(); ++i)
+        {
+            const char* str = i == 0 ? "" : m_Lines[2].m_Tokens[i - 1].c_str();
+            std::fprintf(outFile, "%-*s", static_cast<int>(columnWidths[i]), str);
+
+            if (i != columnWidths.size() - 1)
+            {
+                std::fwrite(" ", 1, 1, outFile);
+            }
+        }
+
+        std::fwrite("\n", 1, 1, outFile);
+
+        // Iterate each row and write it.
+        for (std::size_t i = 3; i < m_Lines.size(); ++i)
+        {
+            for (std::size_t j = 0; j < columnWidths.size(); ++j)
+            {
+                std::string str;
+
+                const TwoDALine& line = m_Lines[i];
+                if (j < line.m_Tokens.size())
+                {
+                    str = line.m_Tokens[j].c_str();
+                    if (str.find(" ") != std::string::npos)
+                    {
+                        str = "\"" + str + "\"";
+                    }
+                }
+
+                std::fprintf(outFile, "%-*s", static_cast<int>(columnWidths[j]), str.c_str());
+                if (j != columnWidths.size() - 1)
+                {
+                    std::fwrite(" ", 1, 1, outFile);
+                }
+            }
+
+            if (i != m_Lines.size())
+            {
+                std::fwrite("\n", 1, 1, outFile);
+            }
+        }
+
+        std::fclose(outFile);
+        return true;
+    }
+
+    return false;
 }
 
 bool TwoDA::ConstructInternal(std::byte const* bytes, std::size_t bytesCount)
