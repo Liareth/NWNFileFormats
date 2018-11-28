@@ -11,14 +11,15 @@ struct TwoDAEntry
     // The data contained in this entry.
     std::string m_Data;
 
-    // This entry is a default value (e.g. specified with ****).
-    bool m_IsDefault;
+    // This entry is an empty value.
+    bool m_IsEmpty;
 };
 
 class TwoDARow
 {
 public:
-    TwoDARow(std::vector<TwoDAEntry>&& data,
+    TwoDARow(std::uint32_t rowId,
+        std::vector<TwoDAEntry>&& data,
         std::unordered_map<std::string, std::size_t> const& columns);
 
     // Operator[] returns the rows directly.
@@ -35,12 +36,15 @@ public:
     float AsFloat(std::size_t column) const;
     float AsFloat(std::string const& column) const;
 
+    std::uint32_t RowId() const;
+
     using TwoDAEntries = std::vector<TwoDAEntry>;
     TwoDAEntries::const_iterator begin() const;
     TwoDAEntries::const_iterator end() const;
     std::size_t size() const;
 
 private:
+    std::uint32_t m_RowId;
     std::unordered_map<std::string, std::size_t> const& m_ColumnNames;
     std::vector<TwoDAEntry> m_Data;
 };
@@ -69,7 +73,7 @@ public:
     TwoDARows::const_iterator end() const;
     std::size_t size() const;
 
-    // The column map is a map, where the index contains the nmme of the column.
+    // The column map is a map, where the index contains the name of the column.
     std::unordered_map<std::string, std::size_t> const& GetColumnNames() const;
 
 private:

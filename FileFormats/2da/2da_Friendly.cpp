@@ -3,9 +3,11 @@
 
 namespace FileFormats::TwoDA::Friendly {
 
-TwoDARow::TwoDARow(std::vector<TwoDAEntry>&& data,
+TwoDARow::TwoDARow(std::uint32_t rowId,
+    std::vector<TwoDAEntry>&& data,
     std::unordered_map<std::string, std::size_t> const& columns)
-    : m_ColumnNames(columns),
+    : m_RowId(rowId),
+      m_ColumnNames(columns),
       m_Data(std::forward<std::vector<TwoDAEntry>>(data))
 {
 }
@@ -53,6 +55,11 @@ float TwoDARow::AsFloat(std::string const& column) const
     return static_cast<float>(atof(operator[](column).m_Data.c_str()));
 }
 
+std::uint32_t TwoDARow::RowId() const
+{
+    return m_RowId;
+}
+
 TwoDARow::TwoDAEntries::const_iterator TwoDARow::begin() const
 {
     return std::cbegin(m_Data);
@@ -88,28 +95,35 @@ TwoDA::TwoDA(Raw::TwoDA const& raw2da)
         std::vector<TwoDAEntry> entries;
         std::vector<Raw::TwoDAToken> const& tokens = raw2da.m_Lines[i].m_Tokens;
 
-        // Skip the first token (which is the row number) when setting this up.
-        for (std::size_t j = 1; j < tokens.size(); ++j)
+        if (tokens.empty())
         {
-            Raw::TwoDAToken const& token = tokens[j];
+            // Non-conforming row - but done a lot in the base game. Just skip it.
+            continue;
+        }
 
+        // We store the row ID - this isn't necessarily to be used by the user,
+        // but could store funky stuff that we might want to access.
+        std::uint32_t rowId = std::stoul(tokens[0]);
+
+        // Skip the first token (which is the row number) when setting this up.
+        for (std::size_t j = 1; j < m_ColumnNames.size() + 1; ++j)
+        {
             TwoDAEntry entry;
 
-            if (token == "****")
+            if (j < tokens.size())
             {
-                entry.m_IsDefault = true;
+                entry.m_IsEmpty = false;
+                entry.m_Data = tokens[j];
             }
             else
             {
-                entry.m_Data = token;
-                entry.m_IsDefault = false;
+                entry.m_IsEmpty = true;
             }
 
             entries.emplace_back(std::move(entry));
-
         }
 
-        m_Rows.emplace_back(std::move(entries), m_ColumnNames);
+        m_Rows.emplace_back(rowId, std::move(entries), m_ColumnNames);
     }
 }
 

@@ -38,7 +38,7 @@ int TwoDAExample(char* path)
 
     for (std::string const& column : columnNames)
     {
-        std::printf("%-8s ", column.c_str());
+        std::printf("%-16s ", column.c_str());
     }
 
     std::printf("\n\n");
@@ -50,15 +50,15 @@ int TwoDAExample(char* path)
             Friendly::TwoDAEntry const& entry = row[i];
 
             // Copy here so we can modify it later.
-            std::string str = entry.m_IsDefault ? "****" : entry.m_Data;
+            std::string str = entry.m_IsEmpty ? "[MISSING_DATA]" : entry.m_Data;
 
-            if (!entry.m_IsDefault && str.find(' ') != std::string::npos)
+            if (!entry.m_IsEmpty && str.find(' ') != std::string::npos)
             {
                 // We have whitespace, so we should surround the entry with quotes when pretty printing it.
                 str = "\"" + str + "\"";
             }
 
-            std::printf("%-8s ", str.c_str());
+            std::printf("%-16s ", str.c_str());
         }
 
         std::printf("\n");
