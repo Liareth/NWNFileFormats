@@ -47,7 +47,7 @@ bool Tlk::ReadFromFile(char const* path, Tlk* out)
     return out->ConstructInternal(memmap.GetDataBlock().GetData(), memmap.GetDataBlock().GetDataLength());
 }
 
-bool Tlk::WriteToFile(char const* path)
+bool Tlk::WriteToFile(char const* path) const
 {
     ASSERT(path);
 
