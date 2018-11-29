@@ -190,17 +190,34 @@ float TwoDA::AsFloat(std::size_t row, std::string const& column) const
     return m_Rows[row].AsFloat(column);
 }
 
-TwoDARow& TwoDA::operator[](std::size_t i)
+TwoDARow& TwoDA::operator[](std::size_t row)
 {
-    ASSERT(i < m_Rows.size());
-    return m_Rows[i];
+    std::size_t rowSize = m_Rows.size();
+
+    if (row < rowSize)
+    {
+        return m_Rows[row];
+    }
+
+    std::size_t rowsToAdd = row - rowSize;
+    for (std::size_t i = 0; i <= rowsToAdd; ++i)
+    {
+        std::vector<TwoDAEntry> entries;
+
+        for (std::size_t j = 1; j < m_ColumnNames.size() + 1; ++j)
+        {
+            TwoDAEntry entry;
+            entry.m_Data = "****";
+            entry.m_IsEmpty = false;
+            entries.emplace_back(std::move(entry));
+        }
+
+        m_Rows.emplace_back(static_cast<std::uint32_t>(rowSize + i), std::move(entries), m_ColumnNames);
+    }
+
+    return m_Rows[row];
 }
 
-TwoDARow const& TwoDA::operator[](std::size_t i) const
-{
-    ASSERT(i < m_Rows.size());
-    return m_Rows[i];
-}
 
 TwoDA::TwoDARows::iterator TwoDA::begin()
 {

@@ -23,6 +23,7 @@ public:
         std::unordered_map<std::string, std::size_t> const& columns);
 
     // Operator[] returns the column directly.
+    // Out-of-range access is not supported at this time.
     TwoDAEntry& operator[](std::size_t column);
     TwoDAEntry& operator[](std::string const& column);
     TwoDAEntry const& operator[](std::size_t column) const;
@@ -72,8 +73,8 @@ public:
     float AsFloat(std::size_t row, std::string const& column) const;
 
     // Operator[] returns the row directly.
-    TwoDARow& operator[](std::size_t i);
-    TwoDARow const& operator[](std::size_t i) const;
+    // Inserts a row if they do not exist - also fills in preceeding rows if they do not exist.
+    TwoDARow& operator[](std::size_t row);
 
     // This is just a flat vector of rows.
     using TwoDARows = std::vector<TwoDARow>;
