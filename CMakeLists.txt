@@ -98,8 +98,11 @@ set(ARTIFACTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Build-Artifacts")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${ARTIFACTS_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${ARTIFACTS_DIR}/lib)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(Utility)
 add_subdirectory(FileFormats)
 add_subdirectory(Examples)
+add_subdirectory(Tools)

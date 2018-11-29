@@ -29,9 +29,9 @@ void RecursivelyEnsureDir(std::string const& dir)
     }
 }
 
-int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath);
+int KeyBifExtractor(char* keyPath, char* basePath, char* outPath);
 
-int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
+int KeyBifExtractor(char* keyPath, char* basePath, char* outPath)
 {
     using namespace FileFormats;
 
@@ -137,6 +137,11 @@ int KeyBifExtractorExample(char* keyPath, char* basePath, char* outPath)
 // "G:/BeamdogLibrary/00829/data/nwn_base.key" "G:/BeamdogLibrary/00829" "G:/OutPath"
 int main(int argc, char** argv)
 {
-    ASSERT(argc == 4);
-    return KeyBifExtractorExample(argv[1], argv[2], argv[3]);
+    if (argc != 4)
+    {
+        std::printf("key_bif_extractor [keyfilepath] [basegamedir] [outpath]\n");
+        return 1;
+    }
+
+    return KeyBifExtractor(argv[1], argv[2], argv[3]);
 }
