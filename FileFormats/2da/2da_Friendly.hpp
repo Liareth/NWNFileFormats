@@ -87,7 +87,7 @@ public:
     // The column map is a map, where the index contains the name of the column.
     std::unordered_map<std::string, std::size_t> const& GetColumnNames() const;
 
-    bool WriteToPath(char const* path) const;
+    bool WriteToFile(char const* path) const;
 
 private:
     TwoDARows m_Rows;

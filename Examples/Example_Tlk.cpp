@@ -37,7 +37,7 @@ int TlkExample(char* path)
     // Then save the tlk back out next to the original.
     char pathBuffer[1024];
     std::sprintf(pathBuffer, "%s.1", path);
-    bool written = tlk.WriteToPath(pathBuffer);
+    bool written = tlk.WriteToFile(pathBuffer);
     ASSERT(written);
 
     return 0;

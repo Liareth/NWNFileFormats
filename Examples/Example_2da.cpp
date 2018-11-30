@@ -67,7 +67,7 @@ int TwoDAExample(char* path)
     // Then save the 2da back out next to the original.
     char pathBuffer[1024];
     std::sprintf(pathBuffer, "%s.1", path);
-    bool written = twoDA.WriteToPath(pathBuffer);
+    bool written = twoDA.WriteToFile(pathBuffer);
     ASSERT(written);
 
     return 0;

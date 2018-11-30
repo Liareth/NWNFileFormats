@@ -74,7 +74,7 @@ Tlk::TlkMapType::const_iterator Tlk::end() const
     return std::cend(m_TlkMap);
 }
 
-bool Tlk::WriteToPath(const char* path) const
+bool Tlk::WriteToFile(const char* path) const
 {
     Raw::Tlk rawTlk;
 

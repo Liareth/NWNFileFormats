@@ -38,7 +38,7 @@ bool TwoDA::ReadFromFile(char const* path, TwoDA* out)
     return out->ConstructInternal(memmap.GetDataBlock().GetData(), memmap.GetDataBlock().GetDataLength());
 }
 
-bool TwoDA::WriteToPath(char const* path) const
+bool TwoDA::WriteToFile(char const* path) const
 {
     ASSERT(path);
 

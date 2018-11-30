@@ -37,7 +37,7 @@ public:
     TlkMapType::const_iterator begin() const;
     TlkMapType::const_iterator end() const;
 
-    bool WriteToPath(const char* path) const;
+    bool WriteToFile(const char* path) const;
 
 private:
     std::uint32_t m_LanguageId;

@@ -249,7 +249,7 @@ std::unordered_map<std::string, std::size_t> const& TwoDA::GetColumnNames() cons
     return m_ColumnNames;
 }
 
-bool TwoDA::WriteToPath(char const* path) const
+bool TwoDA::WriteToFile(char const* path) const
 {
     Raw::TwoDA rawTwoDA;
 
@@ -296,7 +296,7 @@ bool TwoDA::WriteToPath(char const* path) const
         rawTwoDA.m_Lines.emplace_back(std::move(line));
     }
 
-    return rawTwoDA.WriteToPath(path);
+    return rawTwoDA.WriteToFile(path);
 }
 
 }

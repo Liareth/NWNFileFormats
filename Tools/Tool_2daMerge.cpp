@@ -74,7 +74,7 @@ int TwoDAMerge(char* base, char* other, char* out)
     }
 
     // Then save the 2da back out next to the original.
-    if (!baseTwoDA.WriteToPath(out))
+    if (!baseTwoDA.WriteToFile(out))
     {
         std::printf("Failed to save merged 2da to %s.\n", out);
         return 1;
