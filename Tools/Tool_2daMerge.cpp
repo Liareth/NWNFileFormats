@@ -49,7 +49,7 @@ int TwoDAMerge(char* base, char* other, char* out)
     for (const Friendly::TwoDARow& row : otherTwoDA)
     {
         std::uint32_t rowId = row.RowId();
-        if (rowId < std::end(baseTwoDA) - std::begin(baseTwoDA))
+        if (static_cast<int>(rowId) < std::end(baseTwoDA) - std::begin(baseTwoDA))
         {
             auto iterIntoBase = std::begin(baseTwoDA) + rowId;
             for (std::size_t i = 0; i < iterIntoBase->Size(); ++i)

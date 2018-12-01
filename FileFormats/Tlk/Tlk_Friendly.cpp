@@ -82,7 +82,6 @@ bool Tlk::WriteToFile(const char* path) const
     std::memcpy(rawTlk.m_Header.m_FileVersion, "V3.0 ", 4);
     rawTlk.m_Header.m_LanguageID = m_LanguageId;
 
-    std::uint32_t stringCount = 0;
     std::uint32_t stringOffset = 0;
 
     for (const auto& entry : m_TlkMap)

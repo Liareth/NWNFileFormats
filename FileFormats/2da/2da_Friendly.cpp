@@ -280,7 +280,7 @@ bool TwoDA::WriteToFile(char const* path) const
 
     rawTwoDA.m_Lines.emplace_back(std::move(columns));
 
-    for (int rowId = 0; rowId < m_Rows.size(); ++rowId)
+    for (std::size_t rowId = 0; rowId < m_Rows.size(); ++rowId)
     {
         Raw::TwoDALine line;
         line.m_Tokens.emplace_back(std::to_string(rowId));
