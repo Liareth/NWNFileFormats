@@ -52,7 +52,7 @@ int TwoDAMerge(char* base, char* other, char* out)
         if (rowId < std::end(baseTwoDA) - std::begin(baseTwoDA))
         {
             auto iterIntoBase = std::begin(baseTwoDA) + rowId;
-            for (std::size_t i = 0; i < iterIntoBase->size(); ++i)
+            for (std::size_t i = 0; i < iterIntoBase->Size(); ++i)
             {
                 (*iterIntoBase)[i] = row[i];
             }
@@ -67,7 +67,7 @@ int TwoDAMerge(char* base, char* other, char* out)
     for (const Friendly::TwoDARow* row : needToMerge)
     {
         Friendly::TwoDARow& baseRow = baseTwoDA[row->RowId()];
-        for (std::size_t i = 0; i < row->size(); ++i)
+        for (std::size_t i = 0; i < row->Size(); ++i)
         {
             baseRow[i] = (*row)[i];
         }

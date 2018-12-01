@@ -45,7 +45,7 @@ int TwoDAExample(char* path)
 
     for (Friendly::TwoDARow const& row : twoDA)
     {
-        for (std::size_t i = 0; i < row.size(); ++i)
+        for (std::size_t i = 0; i < row.Size(); ++i)
         {
             Friendly::TwoDAEntry const& entry = row[i];
 

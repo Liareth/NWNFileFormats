@@ -49,7 +49,7 @@ public:
     TwoDAEntries::iterator end();
     TwoDAEntries::const_iterator begin() const;
     TwoDAEntries::const_iterator end() const;
-    std::size_t size() const;
+    std::size_t Size() const;
 
 private:
     std::uint32_t m_RowId;
@@ -82,7 +82,7 @@ public:
     TwoDARows::iterator end();
     TwoDARows::const_iterator begin() const;
     TwoDARows::const_iterator end() const;
-    std::size_t size() const;
+    std::size_t Size() const;
 
     // The column map is a map, where the index contains the name of the column.
     std::unordered_map<std::string, std::size_t> const& GetColumnNames() const;

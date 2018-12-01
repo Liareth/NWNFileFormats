@@ -103,7 +103,7 @@ TwoDARow::TwoDAEntries::const_iterator TwoDARow::end() const
     return std::cend(m_Data);
 }
 
-std::size_t TwoDARow::size() const
+std::size_t TwoDARow::Size() const
 {
     return m_Data.size();
 }
@@ -239,7 +239,7 @@ TwoDA::TwoDARows::const_iterator TwoDA::end() const
     return std::cend(m_Rows);
 }
 
-std::size_t TwoDA::size() const
+std::size_t TwoDA::Size() const
 {
     return m_Rows.size();
 }
