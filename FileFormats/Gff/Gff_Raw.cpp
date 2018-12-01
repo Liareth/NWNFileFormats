@@ -36,6 +36,28 @@ bool Gff::ReadFromFile(char const* path, Gff* out)
     return out->ConstructInternal(memmap.GetDataBlock().GetData());
 }
 
+bool Gff::WriteToFile(char const* path) const
+{
+    ASSERT(path);
+
+    FILE* outFile = std::fopen(path, "wb");
+
+    if (outFile)
+    {
+        std::fwrite(&m_Header, sizeof(m_Header), 1, outFile);
+        std::fwrite(m_Structs.data(), sizeof(m_Structs[0]), m_Structs.size(), outFile);
+        std::fwrite(m_Fields.data(), sizeof(m_Fields[0]), m_Fields.size(), outFile);
+        std::fwrite(m_Labels.data(), sizeof(m_Labels[0]), m_Labels.size(), outFile);
+        std::fwrite(m_FieldData.data(), sizeof(m_FieldData[0]), m_FieldData.size(), outFile);
+        std::fwrite(m_FieldIndices.data(), sizeof(m_FieldIndices[0]), m_FieldIndices.size(), outFile);
+        std::fwrite(m_ListIndices.data(), sizeof(m_ListIndices[0]), m_ListIndices.size(), outFile);
+        std::fclose(outFile);
+        return true;
+    }
+
+    return false;
+}
+
 namespace {
 
 template <typename T>

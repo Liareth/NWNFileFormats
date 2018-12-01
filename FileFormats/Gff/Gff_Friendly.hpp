@@ -1,13 +1,52 @@
 #pragma once
 
 #include <any>
-#include <unordered_map>
+#include <map>
 #include <vector>
 
 #include "FileFormats/Gff/Gff_Raw.hpp"
 #include "Utility/Assert.hpp"
 
 namespace FileFormats::Gff::Friendly {
+
+class GffStruct;
+class GffList;
+
+using Type_BYTE = Raw::GffField::Type_BYTE;
+using Type_CHAR = Raw::GffField::Type_CHAR;
+using Type_WORD = Raw::GffField::Type_WORD;
+using Type_SHORT = Raw::GffField::Type_SHORT;
+using Type_DWORD = Raw::GffField::Type_DWORD;
+using Type_INT = Raw::GffField::Type_INT;
+using Type_DWORD64 = Raw::GffField::Type_DWORD64;
+using Type_INT64 = Raw::GffField::Type_INT64;
+using Type_FLOAT = Raw::GffField::Type_FLOAT;
+using Type_DOUBLE = Raw::GffField::Type_DOUBLE;
+using Type_CExoString = Raw::GffField::Type_CExoString;
+using Type_CResRef = Raw::GffField::Type_CResRef;
+using Type_CExoLocString = Raw::GffField::Type_CExoLocString;
+using Type_VOID = Raw::GffField::Type_VOID;
+using Type_Struct = GffStruct;
+using Type_List = GffList;
+
+// Individual functions here rather than a map so users encounter a compile error if they
+// try to write an invalid type when calling from a template.
+Raw::GffField::Type GetTypeFromType(const Type_BYTE&);
+Raw::GffField::Type GetTypeFromType(const Type_CHAR&);
+Raw::GffField::Type GetTypeFromType(const Type_WORD&);
+Raw::GffField::Type GetTypeFromType(const Type_SHORT&);
+Raw::GffField::Type GetTypeFromType(const Type_DWORD&);
+Raw::GffField::Type GetTypeFromType(const Type_INT&);
+Raw::GffField::Type GetTypeFromType(const Type_DWORD64&);
+Raw::GffField::Type GetTypeFromType(const Type_INT64&);
+Raw::GffField::Type GetTypeFromType(const Type_FLOAT&);
+Raw::GffField::Type GetTypeFromType(const Type_DOUBLE&);
+Raw::GffField::Type GetTypeFromType(const Type_CExoString&);
+Raw::GffField::Type GetTypeFromType(const Type_CResRef&);
+Raw::GffField::Type GetTypeFromType(const Type_CExoLocString&);
+Raw::GffField::Type GetTypeFromType(const Type_VOID&);
+Raw::GffField::Type GetTypeFromType(const Type_Struct&);
+Raw::GffField::Type GetTypeFromType(const Type_List&);
 
 class GffStruct
 {
@@ -21,7 +60,7 @@ public:
     GffStruct(Raw::GffField const& rawField, Raw::Gff const& rawGff);
 
     // The field map maps between std::string (field name) -> { Type (gff Type), std::any (type safe variant) }
-    using FieldMap = std::unordered_map<std::string, std::pair<Raw::GffField::Type, std::any>>;
+    using FieldMap = std::map<std::string, std::pair<Raw::GffField::Type, std::any>>;
 
     // We expose direct access to the map here. This allows users to iterate over all fields if they need to do so.
     FieldMap const& GetFields() const;
@@ -38,6 +77,15 @@ public:
     // Similiar to above, except using the kvp pair.
     template <typename T>
     static bool ReadField(typename FieldMap::value_type const& kvp, T* out);
+
+    // The mapping of raw types to GFF types matches the defines in Friendly::Type_*.
+    // This writes into the field the provided value, overwriting it if it already exists.
+    template <typename T>
+    void WriteField(std::string const& fieldName, T field);
+
+    // Deletes the field if it exists. Does nothing if it does not.
+    // Returns whether the field was deleted.
+    bool DeleteField(std::string const& fieldName);
 
 private:
     void ConstructInternal(Raw::GffStruct const& rawStruct, Raw::Gff const& rawGff);
@@ -89,6 +137,12 @@ bool GffStruct::ReadField(typename GffStruct::FieldMap::value_type const& kvp, T
     }
 }
 
+template <typename T>
+void GffStruct::WriteField(std::string const& fieldName, T field)
+{
+    m_Fields[fieldName] = std::make_pair(GetTypeFromType(field), std::move(field));
+}
+
 class GffList
 {
 public:
@@ -97,6 +151,7 @@ public:
     // Constructs a list from the field describing it.
     GffList(Raw::GffField const& rawField, Raw::Gff const& rawGff);
 
+    std::vector<GffStruct>& GetStructs();
     std::vector<GffStruct> const& GetStructs() const;
 
 private:
@@ -104,30 +159,16 @@ private:
     std::vector<GffStruct> m_Structs;
 };
 
-using Type_BYTE = Raw::GffField::Type_BYTE;
-using Type_CHAR = Raw::GffField::Type_CHAR;
-using Type_WORD = Raw::GffField::Type_WORD;
-using Type_SHORT = Raw::GffField::Type_SHORT;
-using Type_DWORD = Raw::GffField::Type_DWORD;
-using Type_INT = Raw::GffField::Type_INT;
-using Type_DWORD64 = Raw::GffField::Type_DWORD64;
-using Type_INT64 = Raw::GffField::Type_INT64;
-using Type_FLOAT = Raw::GffField::Type_FLOAT;
-using Type_DOUBLE = Raw::GffField::Type_DOUBLE;
-using Type_CExoString = Raw::GffField::Type_CExoString;
-using Type_CResRef = Raw::GffField::Type_CResRef;
-using Type_CExoLocString = Raw::GffField::Type_CExoLocString;
-using Type_VOID = Raw::GffField::Type_VOID;
-using Type_Struct = GffStruct;
-using Type_List = GffList;
-
 // This is a user friendly wrapper around the Gff data.
 class Gff
 {
 public:
     Gff(Raw::Gff const& rawGff);
 
+    GffStruct& GetTopLevelStruct();
     GffStruct const& GetTopLevelStruct() const;
+
+    bool WriteToFile(char const* path) const;
 
 private:
     GffStruct m_TopLevelStruct;

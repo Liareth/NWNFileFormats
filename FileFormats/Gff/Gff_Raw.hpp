@@ -331,6 +331,9 @@ struct Gff
     // Constructs an Gff from a file.
     static bool ReadFromFile(char const* path, Gff* out);
 
+    // Writes the raw Gff to disk.
+    bool WriteToFile(char const* path) const;
+
     // Below are functions to construct a type from the provided field.
     GffField::Type_BYTE ConstructBYTE(GffField const& field) const;
     GffField::Type_CHAR ConstructCHAR(GffField const& field) const;

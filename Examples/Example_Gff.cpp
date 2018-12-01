@@ -38,6 +38,17 @@ int GffExample(char* path)
     std::printf("\nPrinting complete Gff data structure.\n");
     GffExamplePrintGff_r(gff.GetTopLevelStruct());
 
+    // Then save the GFF back out next to the original with a new field.
+    Friendly::Type_VOID binaryData;
+    binaryData.m_Data.resize(4);
+    std::memcpy(binaryData.m_Data.data(), "BLOB", 4);
+    gff.GetTopLevelStruct().WriteField("MyTestField", binaryData);
+
+    char pathBuffer[1024];
+    std::sprintf(pathBuffer, "%s.1", path);
+    bool written = gff.WriteToFile(pathBuffer);
+    ASSERT(written);
+
     return 0;
 }
 
