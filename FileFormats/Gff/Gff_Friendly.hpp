@@ -87,12 +87,17 @@ public:
     // Returns whether the field was deleted.
     bool DeleteField(std::string const& fieldName);
 
+    std::uint32_t GetUserDefinedId() const;
+    void SetUserDefinedId(std::uint32_t id);
+
 private:
     void ConstructInternal(Raw::GffStruct const& rawStruct, Raw::Gff const& rawGff);
     void ConstructInternal(std::vector<Raw::GffField> const& rawFields, Raw::Gff const& rawGff);
 
     // We map between field name -> variant here.
     FieldMap m_Fields;
+
+    std::uint32_t m_UserDefinedId;
 };
 
 template <typename T>

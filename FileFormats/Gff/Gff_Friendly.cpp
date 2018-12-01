@@ -114,8 +114,20 @@ bool GffStruct::DeleteField(std::string const& fieldName)
     return false;
 }
 
+std::uint32_t GffStruct::GetUserDefinedId() const
+{
+    return m_UserDefinedId;
+}
+
+void GffStruct::SetUserDefinedId(std::uint32_t id)
+{
+    m_UserDefinedId = id;
+}
+
 void GffStruct::ConstructInternal(Raw::GffStruct const& rawStruct, Raw::Gff const& rawGff)
 {
+    m_UserDefinedId = rawStruct.m_Type;
+
     std::vector<Raw::GffField> fields;
 
     // Sometimes NWN (toolset?) produces ill-formed structures - whether a non-root structure with data offset as 0xFFFFFFFF
@@ -477,7 +489,7 @@ Raw::GffField GffCreator::InsertIntoRawGff(const Type_Struct& type)
     m_RawGff->m_Structs.resize(structIndex + 1);
 
     Raw::GffStruct rawStruct;
-    rawStruct.m_Type = 0; // TODO - This needs to be exposed in the Friendly structure.
+    rawStruct.m_Type = type.GetUserDefinedId();
     rawStruct.m_FieldCount = static_cast<std::uint32_t>(newFields);
 
     if (rawStruct.m_FieldCount > 1)
