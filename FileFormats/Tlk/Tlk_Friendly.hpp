@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <map>
 #include <optional>
+#include <string>
 
 namespace FileFormats::Tlk::Friendly {
 
