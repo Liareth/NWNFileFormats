@@ -134,9 +134,19 @@ TwoDA::TwoDA(Raw::TwoDA const& raw2da)
             continue;
         }
 
-        // We store the row ID - this isn't necessarily to be used by the user,
-        // but could store funky stuff that we might want to access.
-        std::uint32_t rowId = std::stoul(tokens[0]);
+        // Some 2da files have more 1 empty rows, resulting in i=3 => row where
+        // first token is column name
+        std::uint32_t rowId;
+        try
+        {
+            // We store the row ID - this isn't necessarily to be used by the user,
+            // but could store funky stuff that we might want to access.
+            rowId = std::stoul(tokens[0]);
+        }
+        catch (std::invalid_argument& e)
+        {
+            continue;
+        }
 
         // Skip the first token (which is the row number) when setting this up.
         for (std::size_t j = 1; j < m_ColumnNames.size() + 1; ++j)
