@@ -115,15 +115,26 @@ TwoDA::TwoDA(Raw::TwoDA const& raw2da)
     // Line 3 has all the columns.
     ASSERT(raw2da.m_Lines.size() >= 3);
 
-    // Iterate over all of the column names and set up the map.
-    for (std::size_t i = 0; i < raw2da.m_Lines[2].m_Tokens.size(); ++i)
+    std::size_t start_line = 1;
+    // Find first nonempty row (it will contain column labels)
+    for (std::size_t i = start_line; i < raw2da.m_Lines.size(); ++i)
     {
-        std::string const& token = raw2da.m_Lines[2].m_Tokens[i];
+        if (raw2da.m_Lines[i].m_Tokens.size() > 0)
+        {
+            start_line = i;
+            break;
+        }
+    }
+
+    // Iterate over all of the column names and set up the map.
+    for (std::size_t i = 0; i < raw2da.m_Lines[start_line].m_Tokens.size(); ++i)
+    {
+        std::string const& token = raw2da.m_Lines[start_line].m_Tokens[i];
         m_ColumnNames[token] = i;
     }
 
     // Iterate over all of the entries and set them up.
-    for (std::size_t i = 3; i < raw2da.m_Lines.size(); ++i)
+    for (std::size_t i = start_line + 1; i < raw2da.m_Lines.size(); ++i)
     {
         std::vector<TwoDAEntry> entries;
         std::vector<Raw::TwoDAToken> const& tokens = raw2da.m_Lines[i].m_Tokens;
