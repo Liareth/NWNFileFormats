@@ -63,7 +63,7 @@ void Erf::ConstructInternal(Raw::Erf const& rawErf)
         if (m_RawErf.has_value())
         {
             std::unique_ptr<NonOwningDataBlock> db = std::make_unique<NonOwningDataBlock>();
-            db->m_Data = rawErf.m_ResourceData->GetData();
+            db->m_Data = rawErf.m_ResourceData->GetData() + offsetIntoResourceData;
             db->m_DataLength = rawRes.m_ResourceSize;
             resource.m_DataBlock = std::move(db);
         }
