@@ -2,6 +2,7 @@
 #include "FileFormats/Gff.hpp"
 
 #include <set>
+#include <cstring>
 
 #if OS_WINDOWS
     #include "Windows.h"

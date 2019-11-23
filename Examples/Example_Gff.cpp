@@ -1,6 +1,7 @@
 #include "FileFormats/Gff.hpp"
 #include "Utility/Assert.hpp"
 
+#include <cstring>
 #include <cinttypes>
 
 namespace {
