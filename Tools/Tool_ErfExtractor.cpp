@@ -1,19 +1,19 @@
 #include "FileFormats/Erf.hpp"
 #include "Utility/Assert.hpp"
 
+namespace
+{
+
 int extract_erf(const char* out_path, const char* in_path)
 {
     using namespace FileFormats::Erf;
 
-    char erf_path[512];
-    sprintf(erf_path, "%s/%s", in_path, kvp.first.c_str());
-
     Raw::Erf erf_raw;
-    bool loaded = Raw::Erf::ReadFromFile(erf_path, &erf_raw);
+    bool loaded = Raw::Erf::ReadFromFile(in_path, &erf_raw);
 
     if (!loaded)
     {
-        std::printf("Failed to open %s.", erf_path);
+        std::printf("Failed to open %s.", in_path);
         return 1;
     }
 
