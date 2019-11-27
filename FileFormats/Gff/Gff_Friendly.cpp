@@ -209,9 +209,11 @@ std::vector<GffStruct> const& GffList::GetStructs() const
     return m_Structs;
 }
 
+Gff::Gff() : m_TopLevelStruct()
+{ }
+
 Gff::Gff(Raw::Gff const& rawGff) : m_TopLevelStruct(rawGff.m_Structs[0], rawGff)
-{
-}
+{ }
 
 GffStruct& Gff::GetTopLevelStruct()
 {
