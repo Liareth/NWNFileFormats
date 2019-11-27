@@ -5,6 +5,7 @@
 #ifdef _WIN32
     #include "Windows.h"
 #else
+    #include <sys/stat.h>
     #include <dirent.h>
 #endif
 
@@ -72,7 +73,7 @@ FileMap GetAllFilesInDirectory(std::string directory)
                 FileName name = directoryEntry->d_name;
                 ASSERT(files.find(name) == files.end());
 
-                const std::string fullFilePath = CombinePaths(directory, name);
+                const std::string fullFilePath = directory + "/" + name;
                 struct stat fileStatistics;
                 stat(fullFilePath.c_str(), &fileStatistics);
 
