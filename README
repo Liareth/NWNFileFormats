@@ -19,3 +19,4 @@ There are some tools in the Tools subdirectory:
 - 2da_merge allows merging a 2da into a base 2da, overwriting rows that are already present or inserting ones that are not.
 - generate_placeable_blueprints allows the user to generate a series of blueprints from placeables defined in 2da using a base blueprint
 - key_bif_extractor allows extracting all resources in a KEY from their BIFs.
+- erf_extractor allows extracting all resources from an ERF.
