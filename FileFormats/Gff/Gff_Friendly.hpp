@@ -168,6 +168,7 @@ private:
 class Gff
 {
 public:
+    Gff();
     Gff(Raw::Gff const& rawGff);
 
     GffStruct& GetTopLevelStruct();
