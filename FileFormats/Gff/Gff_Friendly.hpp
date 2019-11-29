@@ -174,10 +174,14 @@ public:
     GffStruct& GetTopLevelStruct();
     GffStruct const& GetTopLevelStruct() const;
 
+    char* GetFileType();
+    const char* GetFileType() const;
+
     bool WriteToFile(char const* path) const;
 
 private:
     GffStruct m_TopLevelStruct;
+    char m_FileType[4];
 };
 
 }

@@ -213,7 +213,9 @@ Gff::Gff() : m_TopLevelStruct()
 { }
 
 Gff::Gff(Raw::Gff const& rawGff) : m_TopLevelStruct(rawGff.m_Structs[0], rawGff)
-{ }
+{
+    memcpy(m_FileType, rawGff.m_Header.m_FileType, sizeof(m_FileType));
+}
 
 GffStruct& Gff::GetTopLevelStruct()
 {
@@ -225,10 +227,20 @@ GffStruct const& Gff::GetTopLevelStruct() const
     return m_TopLevelStruct;
 }
 
+char* Gff::GetFileType()
+{
+    return m_FileType;
+}
+
+const char* Gff::GetFileType() const
+{
+    return m_FileType;
+}
+
 struct GffCreator
 {
 public:
-    std::unique_ptr<Raw::Gff> Create(const GffStruct& topLevelStruct);
+    std::unique_ptr<Raw::Gff> Create(const GffStruct& topLevelStruct, const char* fleType);
 
 private:
     template <typename T>
@@ -262,16 +274,16 @@ private:
 
 bool Gff::WriteToFile(char const* path) const
 {
-    return GffCreator().Create(m_TopLevelStruct)->WriteToFile(path);
+    return GffCreator().Create(m_TopLevelStruct, m_FileType)->WriteToFile(path);
 }
 
-std::unique_ptr<Raw::Gff> GffCreator::Create(const GffStruct& topLevelStruct)
+std::unique_ptr<Raw::Gff> GffCreator::Create(const GffStruct& topLevelStruct, const char* fileType)
 {
     m_RawGff = std::make_unique<Raw::Gff>();
     InsertIntoRawGff(topLevelStruct);
 
     Raw::GffHeader* header = &m_RawGff->m_Header;
-    std::memcpy(header->m_FileType, "UTC ", 4);
+    std::memcpy(header->m_FileType, fileType, 4);
     std::memcpy(header->m_FileVersion, "V3.2", 4);
 
     header->m_StructOffset = sizeof(Raw::GffHeader);
