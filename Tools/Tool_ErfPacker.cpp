@@ -1,6 +1,8 @@
 #include "FileFormats/Erf.hpp"
 #include "Utility/Assert.hpp"
 
+#include <algorithm>
+#include <cstring>
 #include <filesystem>
 #include <vector>
 
