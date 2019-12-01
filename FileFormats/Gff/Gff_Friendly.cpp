@@ -277,6 +277,11 @@ bool Gff::WriteToFile(char const* path) const
     return GffCreator().Create(m_TopLevelStruct, m_FileType)->WriteToFile(path);
 }
 
+size_t Gff::WriteToBytes(std::byte* bytes, size_t max_len) const
+{
+    return GffCreator().Create(m_TopLevelStruct, m_FileType)->WriteToBytes(bytes, max_len);
+}
+
 std::unique_ptr<Raw::Gff> GffCreator::Create(const GffStruct& topLevelStruct, const char* fileType)
 {
     m_RawGff = std::make_unique<Raw::Gff>();

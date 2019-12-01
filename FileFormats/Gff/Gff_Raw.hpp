@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+class IStreamWriter;
+
 namespace FileFormats::Gff::Raw {
 
 // Refer to https://wiki.neverwintervault.org/pages/viewpage.action?pageId=327727
@@ -334,6 +336,11 @@ struct Gff
     // Writes the raw Gff to disk.
     bool WriteToFile(char const* path) const;
 
+    // Writes the raw Gff to bytes.
+    // Returns the size written, or 0 if an error occurs.
+    // If max_len is 0, returns the total required size.
+    size_t WriteToBytes(std::byte* bytes, size_t max_len) const;
+
     // Below are functions to construct a type from the provided field.
     GffField::Type_BYTE ConstructBYTE(GffField const& field) const;
     GffField::Type_CHAR ConstructCHAR(GffField const& field) const;
@@ -354,6 +361,7 @@ struct Gff
 
 private:
     bool ConstructInternal(std::byte const* bytes);
+    void WriteInternal(IStreamWriter* writer) const;
     void ReadStructs(std::byte const* data);
     void ReadFields(std::byte const* data);
     void ReadLabels(std::byte const* data);

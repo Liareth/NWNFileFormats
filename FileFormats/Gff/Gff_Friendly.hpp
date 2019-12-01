@@ -1,7 +1,9 @@
 #pragma once
 
 #include <any>
+#include <cstddef>
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "FileFormats/Gff/Gff_Raw.hpp"
@@ -178,6 +180,7 @@ public:
     const char* GetFileType() const;
 
     bool WriteToFile(char const* path) const;
+    size_t WriteToBytes(std::byte* bytes, size_t max_len) const;
 
 private:
     GffStruct m_TopLevelStruct;
