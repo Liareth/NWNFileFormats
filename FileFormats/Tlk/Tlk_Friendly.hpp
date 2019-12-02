@@ -21,6 +21,7 @@ struct TlkEntry
 class Tlk
 {
 public:
+    Tlk();
     Tlk(Raw::Tlk const& rawKey);
 
     // We use a map rather than unordered_map here because it's more user friendly to iterate from 0 -> max.

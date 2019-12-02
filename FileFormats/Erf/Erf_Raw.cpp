@@ -93,6 +93,34 @@ bool Erf::ReadFromFile(char const* path, Erf* out)
     return true;
 }
 
+bool Erf::WriteToFile(char const* path) const
+{
+    ASSERT(path);
+
+    FILE* outFile = std::fopen(path, "wb");
+
+    if (outFile)
+    {
+        std::fwrite(&m_Header, sizeof(m_Header), 1, outFile);
+
+        for (const ErfLocalisedString& str : m_LocalisedStrings)
+        {
+            std::fwrite(&str.m_LanguageId, sizeof(str.m_LanguageId), 1, outFile);
+            uint32_t len = (std::uint32_t)str.m_String.size();
+            std::fwrite(&len, sizeof(len), 1, outFile);
+            std::fwrite(str.m_String.c_str(), len, 1, outFile);
+        }
+
+        std::fwrite(m_Keys.data(), m_Keys.size() * sizeof(ErfKey), 1, outFile);
+        std::fwrite(m_Resources.data(), m_Resources.size() * sizeof(ErfResource), 1, outFile);
+        std::fwrite(m_ResourceData->GetData(), m_ResourceData->GetDataLength(), 1, outFile);
+
+        std::fclose(outFile);
+        return true;
+    }
+
+    return false;
+}
 
 bool Erf::ConstructInternal(std::byte const* bytes)
 {

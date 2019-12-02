@@ -1,6 +1,7 @@
 #include "FileFormats/Gff/Gff_Raw.hpp"
 #include "Utility/Assert.hpp"
 #include "Utility/MemoryMappedFile.hpp"
+#include "Utility/StreamWriter.hpp"
 
 #include <cstring>
 
@@ -41,21 +42,36 @@ bool Gff::WriteToFile(char const* path) const
     ASSERT(path);
 
     FILE* outFile = std::fopen(path, "wb");
-
     if (outFile)
     {
-        std::fwrite(&m_Header, sizeof(m_Header), 1, outFile);
-        std::fwrite(m_Structs.data(), sizeof(m_Structs[0]), m_Structs.size(), outFile);
-        std::fwrite(m_Fields.data(), sizeof(m_Fields[0]), m_Fields.size(), outFile);
-        std::fwrite(m_Labels.data(), sizeof(m_Labels[0]), m_Labels.size(), outFile);
-        std::fwrite(m_FieldData.data(), sizeof(m_FieldData[0]), m_FieldData.size(), outFile);
-        std::fwrite(m_FieldIndices.data(), sizeof(m_FieldIndices[0]), m_FieldIndices.size(), outFile);
-        std::fwrite(m_ListIndices.data(), sizeof(m_ListIndices[0]), m_ListIndices.size(), outFile);
+        FileStreamWriter writer(outFile);
+        WriteInternal(&writer);
         std::fclose(outFile);
         return true;
     }
 
     return false;
+}
+
+size_t Gff::WriteToBytes(std::byte* bytes, size_t max_len) const
+{
+    SizeStreamWriter size_writer;
+    WriteInternal(&size_writer);
+    size_t len_required = size_writer.GetSize();
+
+    if (max_len == 0)
+    {
+        return len_required;
+    }
+
+    if (max_len < len_required)
+    {
+        return 0;
+    }
+
+    MemoryStreamWriter memory_writer(bytes);
+    WriteInternal(&memory_writer);
+    return len_required;
 }
 
 namespace {
@@ -274,6 +290,17 @@ bool Gff::ConstructInternal(std::byte const* bytes)
     ReadLists(bytes);
 
     return true;
+}
+
+void Gff::WriteInternal(IStreamWriter* writer) const
+{
+    writer->Write(&m_Header, sizeof(m_Header));
+    writer->Write(m_Structs.data(), sizeof(m_Structs[0]) * m_Structs.size());
+    writer->Write(m_Fields.data(), sizeof(m_Fields[0]) * m_Fields.size());
+    writer->Write(m_Labels.data(), sizeof(m_Labels[0]) * m_Labels.size());
+    writer->Write(m_FieldData.data(), sizeof(m_FieldData[0]) * m_FieldData.size());
+    writer->Write(m_FieldIndices.data(), sizeof(m_FieldIndices[0]) * m_FieldIndices.size());
+    writer->Write(m_ListIndices.data(), sizeof(m_ListIndices[0]) * m_ListIndices.size());
 }
 
 namespace {

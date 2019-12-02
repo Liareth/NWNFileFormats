@@ -25,6 +25,8 @@ struct ErfResource
 class Erf
 {
 public:
+    Erf();
+
     // This constructs a friendly Erf from a raw Erf.
     Erf(Raw::Erf const& rawBif);
 
@@ -33,8 +35,16 @@ public:
     // the memory usage significantly.
     Erf(Raw::Erf&& rawBif);
 
+    std::vector<Raw::ErfLocalisedString>& GetDescriptions();
     std::vector<Raw::ErfLocalisedString> const& GetDescriptions() const;
+
+    std::vector<ErfResource>& GetResources();
     std::vector<ErfResource> const& GetResources() const;
+
+    char* GetFileType();
+    const char* GetFileType() const;
+
+    bool WriteToFile(char const* path) const;
 
 private:
     std::optional<Raw::Erf> m_RawErf;
@@ -46,6 +56,8 @@ private:
 
     // A vector of resources contained within this ERF.
     std::vector<ErfResource> m_Resources;
+
+    char m_FileType[4];
 };
 
 }

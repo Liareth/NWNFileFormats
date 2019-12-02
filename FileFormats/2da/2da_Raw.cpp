@@ -150,7 +150,7 @@ bool TwoDA::ConstructInternal(std::byte const* bytes, std::size_t bytesCount)
     {
         while (*head++ != '\n' && head < end) {}
         lines.emplace_back(std::string(tail, head - tail));
-        tail = head++;
+        tail = head;
     }
 
     flattenedLines.clear();
