@@ -2,6 +2,10 @@ add_executable(2da_merge Tool_2daMerge.cpp)
 target_link_libraries(2da_merge FileFormats)
 set_target_properties(2da_merge PROPERTIES FOLDER "Tools")
 
+add_executable(diff_creature "Tool_DiffCreature.cpp")
+target_link_libraries(diff_creature FileFormats)
+set_target_properties(diff_creature PROPERTIES FOLDER "Tools")
+
 add_executable(erf_extractor Tool_ErfExtractor.cpp)
 target_link_libraries(erf_extractor FileFormats)
 set_target_properties(erf_extractor PROPERTIES FOLDER "Tools")
