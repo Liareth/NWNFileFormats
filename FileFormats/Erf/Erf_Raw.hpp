@@ -121,6 +121,9 @@ struct Erf
     // Constructs an Erf from a file. The file with be memory mapped so memory usage will be ideal.
     static bool ReadFromFile(char const* path, Erf* out);
 
+    // Writes the raw ERF to disk.
+    bool WriteToFile(char const* path) const;
+
 private:
 
     // This is an RAII wrapper around the various methods of loading a BIF that we have.
@@ -133,7 +136,6 @@ private:
     void ReadLocalisedStrings(std::byte const* data);
     void ReadKeys(std::byte const* data);
     void ReadResources(std::byte const* data);
-    void ReadResourceData(std::byte const* data, std::size_t bytesCount);
 };
 
 }

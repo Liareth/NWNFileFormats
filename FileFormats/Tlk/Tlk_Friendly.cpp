@@ -6,6 +6,9 @@
 
 namespace FileFormats::Tlk::Friendly {
 
+Tlk::Tlk()
+{ }
+
 Tlk::Tlk(Raw::Tlk const& rawTlk)
 {
     m_LanguageId = rawTlk.m_Header.m_LanguageID;

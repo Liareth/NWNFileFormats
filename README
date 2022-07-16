@@ -21,3 +21,4 @@ There are some tools in the Tools subdirectory:
 - generate_placeable_blueprints allows the user to generate a series of blueprints from placeables defined in 2da using a base blueprint
 - key_bif_extractor allows extracting all resources in a KEY from their BIFs.
 - erf_extractor allows extracting all resources from an ERF.
+- erf_packer allows you to pack resources into an ERF (like nwhak).
