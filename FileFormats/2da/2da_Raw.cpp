@@ -233,8 +233,12 @@ bool TwoDA::ConstructInternal(std::byte const* bytes, std::size_t bytesCount)
     ASSERT(m_Lines.size() >= 3);
 
     ASSERT(m_Lines[0].m_Tokens.size() == 2);
-    ASSERT(m_Lines[0].m_Tokens[0].size() == 3);
-    ASSERT(m_Lines[0].m_Tokens[1].size() == 4);
+    // Add trimming to asserted strings, since some 2da files
+    // seem to be inconsisten
+    std::string first = m_Lines[0].m_Tokens[0];
+    std::string second = m_Lines[0].m_Tokens[1];
+    ASSERT(first.erase(first.find_last_not_of(" \n\r\t") + 1).size() == 3);
+    ASSERT(second.erase(second.find_last_not_of(" \n\r\t") + 1).size() == 4);
 
     if (std::memcmp(m_Lines[0].m_Tokens[0].c_str(), "2DA", 3) != 0 ||
         std::memcmp(m_Lines[0].m_Tokens[1].c_str(), "V2.0", 4) != 0)
